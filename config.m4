@@ -78,6 +78,8 @@ if test "$PHP_GEOS" != "no"; then
   AC_CHECK_LIB(geos_c, GEOSVoronoiDiagram, AC_DEFINE(HAVE_GEOS_VORONOI_DIAGRAM,1,[Whether we have GEOSVoronoiDiagram]))
   AC_CHECK_LIB(geos_c, GEOSisClosed, AC_DEFINE(HAVE_GEOS_IS_CLOSED,1,[Whether we have GEOSisClosed]))
   AC_CHECK_LIB(geos_c, GEOSisValidDetail, AC_DEFINE(HAVE_GEOS_IS_VALID_DETAIL,1,[Whether we have GEOSisValidDetail]))
+  AC_CHECK_LIB(geos_c, GEOSGeom_setPrecision, AC_DEFINE(HAVE_GEOS_GEOM_SET_PRECISION,1,[Whether we have GEOSGeom_setPrecision]))
+  AC_CHECK_LIB(geos_c, GEOSGeom_getPrecision, AC_DEFINE(HAVE_GEOS_GEOM_GET_PRECISION,1,[Whether we have GEOSGeom_getPrecision]))
 
   AC_CHECK_LIB(geos_c, GEOSWKTWriter_setTrim, AC_DEFINE(HAVE_GEOS_WKT_WRITER_SET_TRIM,1,[Whether we have GEOSWKTWriter_setTrim]))
   AC_CHECK_LIB(geos_c, GEOSWKTWriter_setRoundingPrecision, AC_DEFINE(HAVE_GEOS_WKT_WRITER_SET_ROUNDING_PRECISION,1,[Whether we have GEOSWKTWriter_setRoundingPrecision]))
@@ -85,6 +87,8 @@ if test "$PHP_GEOS" != "no"; then
   AC_CHECK_LIB(geos_c, GEOSWKTWriter_getOutputDimension, AC_DEFINE(HAVE_GEOS_WKT_WRITER_GET_OUTPUT_DIMENSION,1,[Whether we have GEOSWKTWriter_getOutputDimension]))
   AC_CHECK_LIB(geos_c, GEOSWKTWriter_setOld3D, AC_DEFINE(HAVE_GEOS_WKT_WRITER_SET_OLD_3D,1,[Whether we have GEOSWKTWriter_setOld3D]))
 
+  AC_TRY_COMPILE(geos_c.h, GEOS_PREC_NO_TOPO, AC_DEFINE(HAVE_GEOS_PREC_NO_TOPO,1,[Whether we have GEOS_PREC_NO_TOPO]))
+  AC_TRY_COMPILE(geos_c.h, GEOS_PREC_KEEP_COLLAPSED, AC_DEFINE(HAVE_GEOS_PREC_KEEP_COLLAPSED,1,[Whether we have GEOS_PREC_KEEP_COLLAPSED]))
 
   CFLAGS=$old_CFLAGS
 

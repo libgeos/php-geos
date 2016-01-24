@@ -41,8 +41,14 @@ PHP_MINFO_FUNCTION(geos);
 PHP_FUNCTION(GEOSVersion);
 PHP_FUNCTION(GEOSPolygonize);
 PHP_FUNCTION(GEOSLineMerge);
+
+#ifdef HAVE_GEOS_SHARED_PATHS
 PHP_FUNCTION(GEOSSharedPaths);
+#endif
+
+#ifdef HAVE_GEOS_RELATE_PATTERN_MATCH
 PHP_FUNCTION(GEOSRelateMatch);
+#endif
 
 #if PHP_VERSION_ID < 50399
 #define zend_function_entry function_entry
@@ -52,8 +58,14 @@ static zend_function_entry geos_functions[] = {
     PHP_FE(GEOSVersion, NULL)
     PHP_FE(GEOSPolygonize, NULL)
     PHP_FE(GEOSLineMerge, NULL)
+
+#   ifdef HAVE_GEOS_SHARED_PATHS
     PHP_FE(GEOSSharedPaths, NULL)
+#   endif
+
+#   ifdef HAVE_GEOS_RELATE_PATTERN_MATCH
     PHP_FE(GEOSRelateMatch, NULL)
+#   endif
     {NULL, NULL, NULL}
 };
 
@@ -190,7 +202,11 @@ PHP_METHOD(Geometry, __toString);
 PHP_METHOD(Geometry, project);
 PHP_METHOD(Geometry, interpolate);
 PHP_METHOD(Geometry, buffer);
+
+#ifdef HAVE_GEOS_OFFSET_CURVE
 PHP_METHOD(Geometry, offsetCurve);
+#endif
+
 PHP_METHOD(Geometry, envelope);
 PHP_METHOD(Geometry, intersection);
 PHP_METHOD(Geometry, convexHull);
@@ -201,12 +217,26 @@ PHP_METHOD(Geometry, union); /* also does union cascaded */
 PHP_METHOD(Geometry, pointOnSurface);
 PHP_METHOD(Geometry, centroid);
 PHP_METHOD(Geometry, relate);
+
+#ifdef HAVE_GEOS_RELATE_BOUNDARY_NODE_RULE
 PHP_METHOD(Geometry, relateBoundaryNodeRule);
+#endif
+
 PHP_METHOD(Geometry, simplify); /* also does topology-preserving */
 PHP_METHOD(Geometry, normalize);
+
+#ifdef HAVE_GEOS_GEOM_SET_PRECISION
 PHP_METHOD(Geometry, setPrecision);
+#endif
+
+#ifdef HAVE_GEOS_GEOM_GET_PRECISION
 PHP_METHOD(Geometry, getPrecision);
+#endif
+
+#ifdef HAVE_GEOS_GEOM_EXTRACT_UNIQUE_POINTS
 PHP_METHOD(Geometry, extractUniquePoints);
+#endif
+
 PHP_METHOD(Geometry, disjoint);
 PHP_METHOD(Geometry, touches);
 PHP_METHOD(Geometry, intersects);
@@ -214,16 +244,31 @@ PHP_METHOD(Geometry, crosses);
 PHP_METHOD(Geometry, within);
 PHP_METHOD(Geometry, contains);
 PHP_METHOD(Geometry, overlaps);
+
+#ifdef HAVE_GEOS_COVERS
 PHP_METHOD(Geometry, covers);
+#endif
+
+#ifdef HAVE_GEOS_COVERED_BY
 PHP_METHOD(Geometry, coveredBy);
+#endif
+
 PHP_METHOD(Geometry, equals);
 PHP_METHOD(Geometry, equalsExact);
 PHP_METHOD(Geometry, isEmpty);
+
+#ifdef HAVE_GEOS_IS_VALID_DETAIL
 PHP_METHOD(Geometry, checkValidity);
+#endif
+
 PHP_METHOD(Geometry, isSimple);
 PHP_METHOD(Geometry, isRing);
 PHP_METHOD(Geometry, hasZ);
+
+#ifdef HAVE_GEOS_IS_CLOSED
 PHP_METHOD(Geometry, isClosed);
+#endif
+
 PHP_METHOD(Geometry, typeName);
 PHP_METHOD(Geometry, typeId);
 PHP_METHOD(Geometry, getSRID);
@@ -231,26 +276,64 @@ PHP_METHOD(Geometry, setSRID);
 PHP_METHOD(Geometry, numGeometries);
 PHP_METHOD(Geometry, geometryN);
 PHP_METHOD(Geometry, numInteriorRings);
+
+#ifdef HAVE_GEOS_GEOM_GET_NUM_POINTS
 PHP_METHOD(Geometry, numPoints);
+#endif
+
+#ifdef HAVE_GEOS_GEOM_GET_X
 PHP_METHOD(Geometry, getX);
+#endif
+
+#ifdef HAVE_GEOS_GEOM_GET_Y
 PHP_METHOD(Geometry, getY);
+#endif
+
 PHP_METHOD(Geometry, interiorRingN);
 PHP_METHOD(Geometry, exteriorRing);
 PHP_METHOD(Geometry, numCoordinates);
 PHP_METHOD(Geometry, dimension);
+
+#ifdef HAVE_GEOS_GEOM_GET_COORDINATE_DIMENSION
 PHP_METHOD(Geometry, coordinateDimension);
+#endif
+
+#ifdef HAVE_GEOS_GEOM_GET_POINT_N
 PHP_METHOD(Geometry, pointN);
+#endif
+
+#ifdef HAVE_GEOS_GEOM_GET_START_POINT
 PHP_METHOD(Geometry, startPoint);
+#endif
+
+#ifdef HAVE_GEOS_GEOM_GET_END_POINT
 PHP_METHOD(Geometry, endPoint);
+#endif
+
 PHP_METHOD(Geometry, area);
 PHP_METHOD(Geometry, length);
 PHP_METHOD(Geometry, distance);
 PHP_METHOD(Geometry, hausdorffDistance);
+
+#ifdef HAVE_GEOS_SNAP
 PHP_METHOD(Geometry, snapTo);
+#endif
+
+#ifdef HAVE_GEOS_NODE
 PHP_METHOD(Geometry, node);
+#endif
+
+#ifdef HAVE_GEOS_DELAUNAY_TRIANGULATION
 PHP_METHOD(Geometry, delaunayTriangulation);
+#endif
+
+#ifdef HAVE_GEOS_VORONOI_DIAGRAM
 PHP_METHOD(Geometry, voronoiDiagram);
+#endif
+
+#ifdef HAVE_GEOS_CLIP_BY_RECT
 PHP_METHOD(Geometry, clipByRect);
+#endif
 
 static zend_function_entry Geometry_methods[] = {
     PHP_ME(Geometry, __construct, NULL, 0)
@@ -258,7 +341,11 @@ static zend_function_entry Geometry_methods[] = {
     PHP_ME(Geometry, project, NULL, 0)
     PHP_ME(Geometry, interpolate, NULL, 0)
     PHP_ME(Geometry, buffer, NULL, 0)
+
+#   ifdef HAVE_GEOS_OFFSET_CURVE
     PHP_ME(Geometry, offsetCurve, NULL, 0)
+#   endif
+
     PHP_ME(Geometry, envelope, NULL, 0)
     PHP_ME(Geometry, intersection, NULL, 0)
     PHP_ME(Geometry, convexHull, NULL, 0)
@@ -269,12 +356,26 @@ static zend_function_entry Geometry_methods[] = {
     PHP_ME(Geometry, pointOnSurface, NULL, 0)
     PHP_ME(Geometry, centroid, NULL, 0)
     PHP_ME(Geometry, relate, NULL, 0)
+
+#   ifdef HAVE_GEOS_RELATE_BOUNDARY_NODE_RULE
     PHP_ME(Geometry, relateBoundaryNodeRule, NULL, 0)
+#   endif
+
     PHP_ME(Geometry, simplify, NULL, 0)
     PHP_ME(Geometry, normalize, NULL, 0)
+
+#   ifdef HAVE_GEOS_GEOM_SET_PRECISION
     PHP_ME(Geometry, setPrecision, NULL, 0)
+#   endif
+
+#   if HAVE_GEOS_GEOM_GET_PRECISION
     PHP_ME(Geometry, getPrecision, NULL, 0)
+#   endif
+
+#   ifdef HAVE_GEOS_GEOM_EXTRACT_UNIQUE_POINTS
     PHP_ME(Geometry, extractUniquePoints, NULL, 0)
+#   endif
+
     PHP_ME(Geometry, disjoint, NULL, 0)
     PHP_ME(Geometry, touches, NULL, 0)
     PHP_ME(Geometry, intersects, NULL, 0)
@@ -282,16 +383,31 @@ static zend_function_entry Geometry_methods[] = {
     PHP_ME(Geometry, within, NULL, 0)
     PHP_ME(Geometry, contains, NULL, 0)
     PHP_ME(Geometry, overlaps, NULL, 0)
+
+#   ifdef HAVE_GEOS_COVERS
     PHP_ME(Geometry, covers, NULL, 0)
+#   endif
+
+#   ifdef HAVE_GEOS_COVERED_BY
     PHP_ME(Geometry, coveredBy, NULL, 0)
+#   endif
+
     PHP_ME(Geometry, equals, NULL, 0)
     PHP_ME(Geometry, equalsExact, NULL, 0)
     PHP_ME(Geometry, isEmpty, NULL, 0)
+
+#   ifdef HAVE_GEOS_IS_VALID_DETAIL
     PHP_ME(Geometry, checkValidity, NULL, 0)
+#   endif
+
     PHP_ME(Geometry, isSimple, NULL, 0)
     PHP_ME(Geometry, isRing, NULL, 0)
     PHP_ME(Geometry, hasZ, NULL, 0)
+
+#   ifdef HAVE_GEOS_IS_CLOSED
     PHP_ME(Geometry, isClosed, NULL, 0)
+#   endif
+
     PHP_ME(Geometry, typeName, NULL, 0)
     PHP_ME(Geometry, typeId, NULL, 0)
     PHP_ME(Geometry, getSRID, NULL, 0)
@@ -299,26 +415,65 @@ static zend_function_entry Geometry_methods[] = {
     PHP_ME(Geometry, numGeometries, NULL, 0)
     PHP_ME(Geometry, geometryN, NULL, 0)
     PHP_ME(Geometry, numInteriorRings, NULL, 0)
+
+#   ifdef HAVE_GEOS_GEOM_GET_NUM_POINTS
     PHP_ME(Geometry, numPoints, NULL, 0)
+#   endif
+
+#   ifdef HAVE_GEOS_GEOM_GET_X
     PHP_ME(Geometry, getX, NULL, 0)
+#   endif
+
+#   ifdef HAVE_GEOS_GEOM_GET_Y
     PHP_ME(Geometry, getY, NULL, 0)
+#   endif
+
     PHP_ME(Geometry, interiorRingN, NULL, 0)
     PHP_ME(Geometry, exteriorRing, NULL, 0)
     PHP_ME(Geometry, numCoordinates, NULL, 0)
     PHP_ME(Geometry, dimension, NULL, 0)
+
+#   ifdef HAVE_GEOS_GEOM_GET_COORDINATE_DIMENSION
     PHP_ME(Geometry, coordinateDimension, NULL, 0)
+#   endif
+
+#   ifdef HAVE_GEOS_GEOM_GET_POINT_N
     PHP_ME(Geometry, pointN, NULL, 0)
+#   endif
+
+#   ifdef HAVE_GEOS_GEOM_GET_START_POINT
     PHP_ME(Geometry, startPoint, NULL, 0)
+#   endif
+
+#   ifdef HAVE_GEOS_GEOM_GET_END_POINT
     PHP_ME(Geometry, endPoint, NULL, 0)
+#   endif
+
     PHP_ME(Geometry, area, NULL, 0)
     PHP_ME(Geometry, length, NULL, 0)
     PHP_ME(Geometry, distance, NULL, 0)
     PHP_ME(Geometry, hausdorffDistance, NULL, 0)
+
+#   if HAVE_GEOS_SNAP
     PHP_ME(Geometry, snapTo, NULL, 0)
+#   endif
+
+#   ifdef HAVE_GEOS_NODE
     PHP_ME(Geometry, node, NULL, 0)
+#   endif
+
+#   ifdef HAVE_GEOS_DELAUNAY_TRIANGULATION
     PHP_ME(Geometry, delaunayTriangulation, NULL, 0)
+#   endif
+
+#   ifdef HAVE_GEOS_VORONOI_DIAGRAM
     PHP_ME(Geometry, voronoiDiagram, NULL, 0)
+#   endif
+
+#   ifdef HAVE_GEOS_CLIP_BY_RECT
     PHP_ME(Geometry, clipByRect, NULL, 0)
+#   endif
+
     {NULL, NULL, NULL}
 };
 
@@ -492,7 +647,9 @@ PHP_METHOD(Geometry, __toString)
      *       One fix could be storing the object in a refcounted
      *       zval.
      */
+#   ifdef HAVE_GEOS_WKT_WRITER_SET_TRIM
     GEOSWKTWriter_setTrim(writer, 1);
+#   endif
 
     wkt = GEOSWKTWriter_write(writer, geom);
     /* we'll probably get an exception if wkt is null */
@@ -679,6 +836,7 @@ PHP_METHOD(Geometry, buffer)
  *       mitre ratio limit (only affects joins with GEOSBUF_JOIN_MITRE style)
  *       'miter_limit' is also accepted as a synonym for 'mitre_limit'.
  */
+#ifdef HAVE_GEOS_OFFSET_CURVE
 PHP_METHOD(Geometry, offsetCurve)
 {
     GEOSGeometry *this;
@@ -736,6 +894,7 @@ PHP_METHOD(Geometry, offsetCurve)
     object_init_ex(return_value, Geometry_ce_ptr);
     setRelay(return_value, ret);
 }
+#endif
 
 PHP_METHOD(Geometry, envelope)
 {
@@ -778,6 +937,7 @@ PHP_METHOD(Geometry, intersection)
 /**
  * GEOSGeometry GEOSGeometry::clipByRect(xmin,ymin,xmax,ymax)
  */
+#ifdef HAVE_GEOS_CLIP_BY_RECT
 PHP_METHOD(Geometry, clipByRect)
 {
     GEOSGeometry *this;
@@ -798,6 +958,7 @@ PHP_METHOD(Geometry, clipByRect)
     object_init_ex(return_value, Geometry_ce_ptr);
     setRelay(return_value, ret);
 }
+#endif
 
 PHP_METHOD(Geometry, convexHull)
 {
@@ -897,7 +1058,11 @@ PHP_METHOD(Geometry, union)
         other = getRelay(zobj, Geometry_ce_ptr);
         ret = GEOSUnion(this, other);
     } else {
+#       ifdef HAVE_GEOS_UNARY_UNION
         ret = GEOSUnaryUnion(this);
+#       else
+        ret = GEOSUnionCascaded(this);
+#       endif
     }
 
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
@@ -987,6 +1152,7 @@ PHP_METHOD(Geometry, relate)
 /**
  * GEOSGeometry::relateBoundaryNodeRule(otherGeom, rule)
  */
+#ifdef HAVE_GEOS_RELATE_BOUNDARY_NODE_RULE
 PHP_METHOD(Geometry, relateBoundaryNodeRule)
 {
     GEOSGeometry *this;
@@ -1013,6 +1179,7 @@ PHP_METHOD(Geometry, relateBoundaryNodeRule)
     GEOSFree(pat);
     RETURN_STRING(retStr, 0);
 }
+#endif
 
 /**
  * GEOSGeometry GEOSGeometry::simplify(tolerance)
@@ -1048,6 +1215,7 @@ PHP_METHOD(Geometry, simplify)
 /**
  * GEOSGeometry GEOSGeometry::setPrecision(gridsize, [flags])
  */
+#ifdef HAVE_GEOS_GEOM_SET_PRECISION
 PHP_METHOD(Geometry, setPrecision)
 {
     GEOSGeometry *this;
@@ -1070,10 +1238,12 @@ PHP_METHOD(Geometry, setPrecision)
     object_init_ex(return_value, Geometry_ce_ptr);
     setRelay(return_value, ret);
 }
+#endif
 
 /**
  * double GEOSGeometry::getPrecision()
  */
+#ifdef HAVE_GEOS_GEOM_GET_PRECISION
 PHP_METHOD(Geometry, getPrecision)
 {
     GEOSGeometry *geom;
@@ -1086,6 +1256,7 @@ PHP_METHOD(Geometry, getPrecision)
 
     RETURN_DOUBLE(prec);
 }
+#endif
 
 /**
  * GEOSGeometry GEOSGeometry::normalize()
@@ -1111,6 +1282,7 @@ PHP_METHOD(Geometry, normalize)
 /**
  * GEOSGeometry GEOSGeometry::extractUniquePoints()
  */
+#ifdef HAVE_GEOS_GEOM_EXTRACT_UNIQUE_POINTS
 PHP_METHOD(Geometry, extractUniquePoints)
 {
     GEOSGeometry *this;
@@ -1125,6 +1297,7 @@ PHP_METHOD(Geometry, extractUniquePoints)
     object_init_ex(return_value, Geometry_ce_ptr);
     setRelay(return_value, ret);
 }
+#endif
 
 /**
  * bool GEOSGeometry::disjoint(GEOSGeometry)
@@ -1318,6 +1491,7 @@ PHP_METHOD(Geometry, overlaps)
 /**
  * bool GEOSGeometry::covers(GEOSGeometry)
  */
+#ifdef HAVE_GEOS_COVERS
 PHP_METHOD(Geometry, covers)
 {
     GEOSGeometry *this;
@@ -1341,10 +1515,12 @@ PHP_METHOD(Geometry, covers)
     retBool = ret;
     RETURN_BOOL(retBool);
 }
+#endif
 
 /**
  * bool GEOSGeometry::coveredBy(GEOSGeometry)
  */
+#ifdef HAVE_GEOS_COVERED_BY
 PHP_METHOD(Geometry, coveredBy)
 {
     GEOSGeometry *this;
@@ -1368,6 +1544,7 @@ PHP_METHOD(Geometry, coveredBy)
     retBool = ret;
     RETURN_BOOL(retBool);
 }
+#endif
 
 /**
  * bool GEOSGeometry::equals(GEOSGeometry)
@@ -1447,6 +1624,7 @@ PHP_METHOD(Geometry, isEmpty)
 /**
  * array GEOSGeometry::checkValidity()
  */
+#ifdef HAVE_GEOS_IS_VALID_DETAIL
 PHP_METHOD(Geometry, checkValidity)
 {
     GEOSGeometry *this;
@@ -1488,6 +1666,7 @@ PHP_METHOD(Geometry, checkValidity)
     if ( locationVal ) add_assoc_zval(return_value, "location", locationVal);
 
 }
+#endif
 
 /**
  * bool GEOSGeometry::isSimple()
@@ -1549,6 +1728,7 @@ PHP_METHOD(Geometry, hasZ)
 /**
  * bool GEOSGeometry::isClosed()
  */
+#ifdef HAVE_GEOS_IS_CLOSED
 PHP_METHOD(Geometry, isClosed)
 {
     GEOSGeometry *this;
@@ -1564,6 +1744,7 @@ PHP_METHOD(Geometry, isClosed)
     retBool = ret;
     RETURN_BOOL(retBool);
 }
+#endif
 
 /**
  * string GEOSGeometry::typeName()
@@ -1700,6 +1881,7 @@ PHP_METHOD(Geometry, numInteriorRings)
 /**
  * long GEOSGeometry::numPoints()
  */
+#ifdef HAVE_GEOS_GEOM_GET_NUM_POINTS
 PHP_METHOD(Geometry, numPoints)
 {
     GEOSGeometry *geom;
@@ -1712,10 +1894,12 @@ PHP_METHOD(Geometry, numPoints)
 
     RETURN_LONG(ret);
 }
+#endif
 
 /**
  * double GEOSGeometry::getX()
  */
+#ifdef HAVE_GEOS_GEOM_GET_X
 PHP_METHOD(Geometry, getX)
 {
     GEOSGeometry *geom;
@@ -1729,10 +1913,12 @@ PHP_METHOD(Geometry, getX)
 
     RETURN_DOUBLE(x);
 }
+#endif
 
 /**
  * double GEOSGeometry::getY()
  */
+#ifdef HAVE_GEOS_GEOM_GET_Y
 PHP_METHOD(Geometry, getY)
 {
     GEOSGeometry *geom;
@@ -1746,6 +1932,7 @@ PHP_METHOD(Geometry, getY)
 
     RETURN_DOUBLE(y);
 }
+#endif
 
 /**
  * GEOSGeometry GEOSGeometry::interiorRingN()
@@ -1830,6 +2017,7 @@ PHP_METHOD(Geometry, dimension)
 /**
  * long GEOSGeometry::coordinateDimension()
  */
+#ifdef HAVE_GEOS_GEOM_GET_COORDINATE_DIMENSION
 PHP_METHOD(Geometry, coordinateDimension)
 {
     GEOSGeometry *geom;
@@ -1842,10 +2030,12 @@ PHP_METHOD(Geometry, coordinateDimension)
 
     RETURN_LONG(ret);
 }
+#endif
 
 /**
  * GEOSGeometry GEOSGeometry::pointN()
  */
+#ifdef HAVE_GEOS_GEOM_GET_POINT_N
 PHP_METHOD(Geometry, pointN)
 {
     GEOSGeometry *geom;
@@ -1866,6 +2056,7 @@ PHP_METHOD(Geometry, pointN)
     object_init_ex(return_value, Geometry_ce_ptr);
     setRelay(return_value, c);
 }
+#endif
 
 /**
  * GEOSGeometry GEOSGeometry::startPoint()
@@ -1989,6 +2180,7 @@ PHP_METHOD(Geometry, hausdorffDistance)
     RETURN_DOUBLE(dist);
 }
 
+#ifdef HAVE_GEOS_SNAP
 PHP_METHOD(Geometry, snapTo)
 {
     GEOSGeometry *this;
@@ -2012,7 +2204,9 @@ PHP_METHOD(Geometry, snapTo)
     object_init_ex(return_value, Geometry_ce_ptr);
     setRelay(return_value, ret);
 }
+#endif
 
+#ifdef HAVE_GEOS_NODE
 PHP_METHOD(Geometry, node)
 {
     GEOSGeometry *this;
@@ -2027,6 +2221,7 @@ PHP_METHOD(Geometry, node)
     object_init_ex(return_value, Geometry_ce_ptr);
     setRelay(return_value, ret);
 }
+#endif
 
 
 
@@ -2107,20 +2302,51 @@ PHP_METHOD(WKTReader, read)
 
 PHP_METHOD(WKTWriter, __construct);
 PHP_METHOD(WKTWriter, write);
+
+#ifdef HAVE_GEOS_WKT_WRITER_SET_TRIM
 PHP_METHOD(WKTWriter, setTrim);
+#endif
+
+#ifdef HAVE_GEOS_WKT_WRITER_SET_ROUNDING_PRECISION
 PHP_METHOD(WKTWriter, setRoundingPrecision);
+#endif
+
+#ifdef HAVE_GEOS_WKT_WRITER_SET_OUTPUT_DIMENSION
 PHP_METHOD(WKTWriter, setOutputDimension);
+#endif
+
+#ifdef HAVE_GEOS_WKT_WRITER_GET_OUTPUT_DIMENSION
 PHP_METHOD(WKTWriter, getOutputDimension);
+#endif
+
+#ifdef HAVE_GEOS_WKT_WRITER_SET_OLD_3D
 PHP_METHOD(WKTWriter, setOld3D);
+#endif
 
 static zend_function_entry WKTWriter_methods[] = {
     PHP_ME(WKTWriter, __construct, NULL, 0)
     PHP_ME(WKTWriter, write, NULL, 0)
+
+#   ifdef HAVE_GEOS_WKT_WRITER_SET_TRIM
     PHP_ME(WKTWriter, setTrim, NULL, 0)
+#   endif
+
+#   ifdef HAVE_GEOS_WKT_WRITER_SET_ROUNDING_PRECISION
     PHP_ME(WKTWriter, setRoundingPrecision, NULL, 0)
+#   endif
+
+#   ifdef HAVE_GEOS_WKT_WRITER_SET_OUTPUT_DIMENSION
     PHP_ME(WKTWriter, setOutputDimension, NULL, 0)
+#   endif
+
+#   ifdef HAVE_GEOS_WKT_WRITER_GET_OUTPUT_DIMENSION
     PHP_ME(WKTWriter, getOutputDimension, NULL, 0)
+#   endif
+
+#   ifdef HAVE_GEOS_WKT_WRITER_SET_OLD_3D
     PHP_ME(WKTWriter, setOld3D, NULL, 0)
+#   endif
+
     {NULL, NULL, NULL}
 };
 
@@ -2188,6 +2414,7 @@ PHP_METHOD(WKTWriter, write)
     RETURN_STRING(retstr, 0);
 }
 
+#ifdef HAVE_GEOS_WKT_WRITER_SET_TRIM
 PHP_METHOD(WKTWriter, setTrim)
 {
     GEOSWKTWriter *writer;
@@ -2205,7 +2432,9 @@ PHP_METHOD(WKTWriter, setTrim)
     trim = trimval;
     GEOSWKTWriter_setTrim(writer, trim);
 }
+#endif
 
+#ifdef HAVE_GEOS_WKT_WRITER_SET_ROUNDING_PRECISION
 PHP_METHOD(WKTWriter, setRoundingPrecision)
 {
     GEOSWKTWriter *writer;
@@ -2221,10 +2450,12 @@ PHP_METHOD(WKTWriter, setRoundingPrecision)
 
     GEOSWKTWriter_setRoundingPrecision(writer, prec);
 }
+#endif
 
 /**
  * void GEOSWKTWriter::setOutputDimension()
  */
+#ifdef HAVE_GEOS_WKT_WRITER_SET_OUTPUT_DIMENSION
 PHP_METHOD(WKTWriter, setOutputDimension)
 {
     GEOSWKTWriter *writer;
@@ -2240,10 +2471,12 @@ PHP_METHOD(WKTWriter, setOutputDimension)
 
     GEOSWKTWriter_setOutputDimension(writer, dim);
 }
+#endif
 
 /**
  * long GEOSWKTWriter::getOutputDimension()
  */
+#ifdef HAVE_GEOS_WKT_WRITER_GET_OUTPUT_DIMENSION
 PHP_METHOD(WKTWriter, getOutputDimension)
 {
     GEOSWKTWriter *writer;
@@ -2255,7 +2488,9 @@ PHP_METHOD(WKTWriter, getOutputDimension)
 
     RETURN_LONG(ret);
 }
+#endif
 
+#ifdef HAVE_GEOS_WKT_WRITER_SET_OLD_3D
 PHP_METHOD(WKTWriter, setOld3D)
 {
     GEOSWKTWriter *writer;
@@ -2273,6 +2508,7 @@ PHP_METHOD(WKTWriter, setOld3D)
     val = bval;
     GEOSWKTWriter_setOld3D(writer, val);
 }
+#endif
 
 /* -- class GEOSWKBWriter -------------------- */
 
@@ -2724,6 +2960,7 @@ PHP_FUNCTION(GEOSLineMerge)
 /**
  * GEOSGeometry GEOSSharedPaths(GEOSGeometry $geom1, GEOSGeometry *geom2)
  */
+#ifdef HAVE_GEOS_SHARED_PATHS
 PHP_FUNCTION(GEOSSharedPaths)
 {
     GEOSGeometry *geom_in_1;
@@ -2746,6 +2983,7 @@ PHP_FUNCTION(GEOSSharedPaths)
     object_init_ex(return_value, Geometry_ce_ptr);
     setRelay(return_value, geom_out);
 }
+#endif
 
 /**
  * GEOSGeometry::delaunayTriangulation([<tolerance>], [<onlyEdges>])
@@ -2758,6 +2996,7 @@ PHP_FUNCTION(GEOSSharedPaths)
  *       if true will return a MULTILINESTRING, otherwise (the default)
  *       it will return a GEOMETRYCOLLECTION containing triangular POLYGONs.
  */
+#ifdef HAVE_GEOS_DELAUNAY_TRIANGULATION
 PHP_METHOD(Geometry, delaunayTriangulation)
 {
     GEOSGeometry *this;
@@ -2779,6 +3018,7 @@ PHP_METHOD(Geometry, delaunayTriangulation)
     object_init_ex(return_value, Geometry_ce_ptr);
     setRelay(return_value, ret);
 }
+#endif
 
 /**
  * GEOSGeometry::voronoiDiagram([<tolerance>], [<onlyEdges>], [<extent>])
@@ -2794,6 +3034,7 @@ PHP_METHOD(Geometry, delaunayTriangulation)
  *       Type: geometry
  *       Clip returned diagram by the extent of the given geometry
  */
+#ifdef HAVE_GEOS_VORONOI_DIAGRAM
 PHP_METHOD(Geometry, voronoiDiagram)
 {
     GEOSGeometry *this;
@@ -2818,10 +3059,12 @@ PHP_METHOD(Geometry, voronoiDiagram)
     object_init_ex(return_value, Geometry_ce_ptr);
     setRelay(return_value, ret);
 }
+#endif
 
 /**
  * bool GEOSRelateMatch(string matrix, string pattern)
  */
+#ifdef HAVE_GEOS_RELATE_PATTERN_MATCH
 PHP_FUNCTION(GEOSRelateMatch)
 {
     char* mat = NULL;
@@ -2844,6 +3087,7 @@ PHP_FUNCTION(GEOSRelateMatch)
     retBool = ret;
     RETURN_BOOL(retBool);
 }
+#endif
 
 /* ------ Initialization / Deinitialization / Meta ------------------ */
 
@@ -2931,10 +3175,15 @@ PHP_MINIT_FUNCTION(geos)
         GEOSVALID_ALLOW_SELFTOUCHING_RING_FORMING_HOLE,
         CONST_CS|CONST_PERSISTENT);
 
+#   ifdef HAVE_GEOS_PREC_NO_TOPO
     REGISTER_LONG_CONSTANT("GEOS_PREC_NO_TOPO", GEOS_PREC_NO_TOPO,
         CONST_CS|CONST_PERSISTENT);
+#   endif
+
+#   ifdef HAVE_GEOS_PREC_KEEP_COLLAPSED
     REGISTER_LONG_CONSTANT("GEOS_PREC_KEEP_COLLAPSED", GEOS_PREC_NO_TOPO,
         CONST_CS|CONST_PERSISTENT);
+#   endif
 
     REGISTER_LONG_CONSTANT("GEOSRELATE_BNR_MOD2", GEOSRELATE_BNR_MOD2,
         CONST_CS|CONST_PERSISTENT);
