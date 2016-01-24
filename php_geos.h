@@ -1,5 +1,5 @@
 /***********************************************************************
- * 
+ *
  *    GEOS - Geometry Engine Open Source
  *    http://trac.osgeo.org/geos
  *
@@ -31,7 +31,7 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif 
+#endif
 
 #include "php.h"
 

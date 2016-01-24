@@ -1,6 +1,6 @@
 <?php
 
-# 
+#
 # This file contains code attempting to segfault the extension
 #
 # Run with:
@@ -14,7 +14,7 @@ class Point extends GEOSWKTReader {
     {
         parent::__construct();
     }
-    public function test() {    
+    public function test() {
         return GEOSGeometry::numGeometries();
     }
 };
