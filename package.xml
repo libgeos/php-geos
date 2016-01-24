@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<package packagerversion="1.4.11" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+http://pear.php.net/dtd/tasks-1.0.xsd
+http://pear.php.net/dtd/package-2.0
+http://pear.php.net/dtd/package-2.0.xsd">
+  <name>geos</name>
+  <channel>pecl.php.net</channel>
+  <summary>PHP extension for interfacing with the GEOS library</summary>
+  <description>
+    This extension provides a PECL package for the GEOS library.
+  </description>
+  <lead>
+    <name>J Smith</name>
+    <user>jay</user>
+    <email>jay@php.net</email>
+    <active>yes</active>
+  </lead>
+  <lead>
+    <name>Sandro Santilli</name>
+    <email>strk@keybit.net</name>
+  </lead>
+  <date>2016-01-19</date>
+  <version>
+    <release>0.0.1</release>
+    <api>0.0.1</api>
+  </version>
+  <stability>
+    <release>stable</release>
+    <api>stable</api>
+  </stability>
+  <license uri="">Mixed</license>
+  <notes>
+- First release
+  </notes>
+  <contents>
+    <dir name="/">
+      <file role="src" name="geos.c"/>
+      <file role="src" name="php_geos.h"/>
+      <file role="src" name="config.m4"/>
+      <file role="doc" name="COPYING"/>
+      <file role="doc" name="CREDITS"/>
+      <file role="doc" name="LGPL-2"/>
+      <file role="doc" name="MIT-LICENSE"/>
+      <dir name="/">
+        <file role="test" name="test.php"/>
+        <file role="test" name="crashme.php"/>
+      </dir>
+    </dir>
+  </contents>
+  <dependencies>
+    <required>
+      <php>
+        <min>5.6.0</min>
+      </php>
+      <pearinstaller>
+        <min>1.4.0b1</min>
+      </pearinstaller>
+    </required>
+  </dependencies>
+  <providesextension>geos</providesextension>
+  <extsrcrelease>
+    <configureoption name="with-geos-config" default="no" prompt="geos-config directory"/>
+  </extsrcrelease>
+  <changelog>
+    <release>
+      <stability><release>stable</release><api>stable</api></stability>
+      <version><release>0.0.1</release><api>0.0.1</api></version>
+      <date>2016-01-19</date>
+      <notes>
+- First release
+      </notes>
+    </release>
+  </changelog>
+</package>
