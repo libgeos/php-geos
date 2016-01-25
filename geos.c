@@ -33,6 +33,9 @@
 /* Own stuff */
 #include "php_geos.h"
 
+static ZEND_DECLARE_MODULE_GLOBALS(geos);
+static PHP_GINIT_FUNCTION(geos);
+
 PHP_MINIT_FUNCTION(geos);
 PHP_MSHUTDOWN_FUNCTION(geos);
 PHP_RINIT_FUNCTION(geos);
@@ -79,7 +82,11 @@ zend_module_entry geos_module_entry = {
     PHP_RSHUTDOWN(geos),          /* request shutdown function */
     PHP_MINFO(geos),              /* module info function */
     PHP_GEOS_VERSION,
-    STANDARD_MODULE_PROPERTIES
+    PHP_MODULE_GLOBALS(geos),     /* globals descriptor */
+    PHP_GINIT(geos),              /* globals ctor */
+    NULL,                         /* globals dtor */
+    NULL,                         /* post deactivate */
+    STANDARD_MODULE_PROPERTIES_EX
 };
 
 #ifdef COMPILE_DL_GEOS
@@ -488,9 +495,9 @@ static GEOSWKBWriter* Geometry_serializer = 0;
 static GEOSWKBWriter* getGeometrySerializer()
 {
     if ( ! Geometry_serializer ) {
-        Geometry_serializer = GEOSWKBWriter_create();
-        GEOSWKBWriter_setIncludeSRID(Geometry_serializer, 1);
-        GEOSWKBWriter_setOutputDimension(Geometry_serializer, 3);
+        Geometry_serializer = GEOSWKBWriter_create_r(GEOS_G(handle));
+        GEOSWKBWriter_setIncludeSRID_r(GEOS_G(handle), Geometry_serializer, 1);
+        GEOSWKBWriter_setOutputDimension_r(GEOS_G(handle), Geometry_serializer, 3);
     }
     return Geometry_serializer;
 }
@@ -498,7 +505,7 @@ static GEOSWKBWriter* getGeometrySerializer()
 static void delGeometrySerializer()
 {
     if ( Geometry_serializer ) {
-        GEOSWKBWriter_destroy(Geometry_serializer);
+        GEOSWKBWriter_destroy_r(GEOS_G(handle), Geometry_serializer);
     }
 }
 
@@ -509,7 +516,7 @@ static GEOSWKBReader* Geometry_deserializer = 0;
 static GEOSWKBReader* getGeometryDeserializer()
 {
     if ( ! Geometry_deserializer ) {
-        Geometry_deserializer = GEOSWKBReader_create();
+        Geometry_deserializer = GEOSWKBReader_create_r(GEOS_G(handle));
     }
     return Geometry_deserializer;
 }
@@ -517,7 +524,7 @@ static GEOSWKBReader* getGeometryDeserializer()
 static void delGeometryDeserializer()
 {
     if ( Geometry_deserializer ) {
-        GEOSWKBReader_destroy(Geometry_deserializer);
+        GEOSWKBReader_destroy_r(GEOS_G(handle), Geometry_deserializer);
     }
 }
 
@@ -537,12 +544,12 @@ Geometry_serialize(zval *object, unsigned char **buffer, zend_uint *buf_len,
     geom = (GEOSGeometry*)getRelay(object, Geometry_ce_ptr);
 
     /* NOTE: we might be fine using binary here */
-    ret = (char*)GEOSWKBWriter_writeHEX(serializer, geom, &retsize);
+    ret = (char*)GEOSWKBWriter_writeHEX_r(GEOS_G(handle), serializer, geom, &retsize);
     /* we'll probably get an exception if ret is null */
     if ( ! ret ) return FAILURE;
 
     *buffer = (unsigned char*)estrndup(ret, retsize);
-    GEOSFree(ret);
+    GEOSFree_r(GEOS_G(handle), ret);
 
     *buf_len = retsize;
 
@@ -557,7 +564,7 @@ Geometry_deserialize(zval **object, zend_class_entry *ce, const unsigned char *b
     GEOSGeometry* geom;
 
     deserializer = getGeometryDeserializer();
-    geom = GEOSWKBReader_readHEX(deserializer, buf, buf_len);
+    geom = GEOSWKBReader_readHEX_r(GEOS_G(handle), deserializer, buf, buf_len);
 
     /* TODO: check zend_class_entry being what we expect! */
     if ( ce != Geometry_ce_ptr ) {
@@ -588,15 +595,15 @@ dumpGeometry(GEOSGeometry* g, zval* array)
     array_init(array);
     */
 
-    ngeoms = GEOSGetNumGeometries(g);
+    ngeoms = GEOSGetNumGeometries_r(GEOS_G(handle), g);
     for (i=0; i<ngeoms; ++i)
     {
         zval *tmp;
         GEOSGeometry* cc;
-        const GEOSGeometry* c = GEOSGetGeometryN(g, i);
+        const GEOSGeometry* c = GEOSGetGeometryN_r(GEOS_G(handle), g, i);
         if ( ! c ) continue; /* should get an exception */
         /* we _need_ to clone as this one is owned by 'g' */
-        cc = GEOSGeom_clone(c);
+        cc = GEOSGeom_clone_r(GEOS_G(handle), c);
         if ( ! cc ) continue; /* should get an exception */
 
         MAKE_STD_ZVAL(tmp);
@@ -611,7 +618,7 @@ static void
 Geometry_dtor (void *object TSRMLS_DC)
 {
     Proxy *obj = (Proxy *)object;
-    GEOSGeom_destroy((GEOSGeometry*)obj->relay);
+    GEOSGeom_destroy_r(GEOS_G(handle), (GEOSGeometry*)obj->relay);
 
     zend_hash_destroy(obj->std.properties);
     FREE_HASHTABLE(obj->std.properties);
@@ -641,25 +648,25 @@ PHP_METHOD(Geometry, __toString)
     char *ret;
 
     geom = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
-    writer = GEOSWKTWriter_create();
+    writer = GEOSWKTWriter_create_r(GEOS_G(handle));
     /* NOTE: if we get an exception before reaching
      *       GEOSWKTWriter_destory below we'll be leaking memory.
      *       One fix could be storing the object in a refcounted
      *       zval.
      */
 #   ifdef HAVE_GEOS_WKT_WRITER_SET_TRIM
-    GEOSWKTWriter_setTrim(writer, 1);
+    GEOSWKTWriter_setTrim_r(GEOS_G(handle), writer, 1);
 #   endif
 
-    wkt = GEOSWKTWriter_write(writer, geom);
+    wkt = GEOSWKTWriter_write_r(GEOS_G(handle), writer, geom);
     /* we'll probably get an exception if wkt is null */
     if ( ! wkt ) RETURN_NULL();
 
-    GEOSWKTWriter_destroy(writer);
+    GEOSWKTWriter_destroy_r(GEOS_G(handle), writer);
 
 
     ret = estrdup(wkt);
-    GEOSFree(wkt);
+    GEOSFree_r(GEOS_G(handle), wkt);
 
     RETURN_STRING(ret, 0);
 }
@@ -681,9 +688,9 @@ PHP_METHOD(Geometry, project)
     other = getRelay(zobj, Geometry_ce_ptr);
 
     if ( normalized ) {
-        ret = GEOSProjectNormalized(this, other);
+        ret = GEOSProjectNormalized_r(GEOS_G(handle), this, other);
     } else {
-        ret = GEOSProject(this, other);
+        ret = GEOSProject_r(GEOS_G(handle), this, other);
     }
     if ( ret < 0 ) RETURN_NULL(); /* should get an exception first */
 
@@ -705,9 +712,9 @@ PHP_METHOD(Geometry, interpolate)
     }
 
     if ( normalized ) {
-        ret = GEOSInterpolateNormalized(this, dist);
+        ret = GEOSInterpolateNormalized_r(GEOS_G(handle), this, dist);
     } else {
-        ret = GEOSInterpolate(this, dist);
+        ret = GEOSInterpolate_r(GEOS_G(handle), this, dist);
     }
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
@@ -768,7 +775,7 @@ PHP_METHOD(Geometry, buffer)
         RETURN_NULL();
     }
 
-    params = GEOSBufferParams_create();
+    params = GEOSBufferParams_create_r(GEOS_G(handle));
 
     if ( style_val )
     {
@@ -780,39 +787,39 @@ PHP_METHOD(Geometry, buffer)
             {
                 zend_hash_get_current_data(style, (void**)&data);
                 quadSegs = getZvalAsLong(*data);
-                GEOSBufferParams_setQuadrantSegments(params, quadSegs);
+                GEOSBufferParams_setQuadrantSegments_r(GEOS_G(handle), params, quadSegs);
             }
             else if(!strcmp(key, "endcap"))
             {
                 zend_hash_get_current_data(style, (void**)&data);
                 endCapStyle = getZvalAsLong(*data);
-                GEOSBufferParams_setEndCapStyle(params, endCapStyle);
+                GEOSBufferParams_setEndCapStyle_r(GEOS_G(handle), params, endCapStyle);
             }
             else if(!strcmp(key, "join"))
             {
                 zend_hash_get_current_data(style, (void**)&data);
                 joinStyle = getZvalAsLong(*data);
-                GEOSBufferParams_setJoinStyle(params, joinStyle);
+                GEOSBufferParams_setJoinStyle_r(GEOS_G(handle), params, joinStyle);
             }
             else if(!strcmp(key, "mitre_limit"))
             {
                 zend_hash_get_current_data(style, (void**)&data);
                 mitreLimit = getZvalAsDouble(*data);
-                GEOSBufferParams_setMitreLimit(params, mitreLimit);
+                GEOSBufferParams_setMitreLimit_r(GEOS_G(handle), params, mitreLimit);
             }
             else if(!strcmp(key, "single_sided"))
             {
                 zend_hash_get_current_data(style, (void**)&data);
                 singleSided = getZvalAsLong(*data);
-                GEOSBufferParams_setSingleSided(params, singleSided);
+                GEOSBufferParams_setSingleSided_r(GEOS_G(handle), params, singleSided);
             }
 
             zend_hash_move_forward(style);
         }
     }
 
-    ret = GEOSBufferWithParams(this, params, dist);
-    GEOSBufferParams_destroy(params);
+    ret = GEOSBufferWithParams_r(GEOS_G(handle), this, params, dist);
+    GEOSBufferParams_destroy_r(GEOS_G(handle), params);
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -887,7 +894,7 @@ PHP_METHOD(Geometry, offsetCurve)
         }
     }
 
-    ret = GEOSOffsetCurve(this, dist, quadSegs, joinStyle, mitreLimit);
+    ret = GEOSOffsetCurve_r(GEOS_G(handle), this, dist, quadSegs, joinStyle, mitreLimit);
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -903,7 +910,7 @@ PHP_METHOD(Geometry, envelope)
 
     this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSEnvelope(this);
+    ret = GEOSEnvelope_r(GEOS_G(handle), this);
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -926,7 +933,7 @@ PHP_METHOD(Geometry, intersection)
     }
     other = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = GEOSIntersection(this, other);
+    ret = GEOSIntersection_r(GEOS_G(handle), this, other);
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -951,7 +958,7 @@ PHP_METHOD(Geometry, clipByRect)
         RETURN_NULL();
     }
 
-    ret = GEOSClipByRect(this, xmin, ymin, xmax, ymax);
+    ret = GEOSClipByRect_r(GEOS_G(handle), this, xmin, ymin, xmax, ymax);
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -967,7 +974,7 @@ PHP_METHOD(Geometry, convexHull)
 
     this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSConvexHull(this);
+    ret = GEOSConvexHull_r(GEOS_G(handle), this);
     if ( ret == NULL ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -990,7 +997,7 @@ PHP_METHOD(Geometry, difference)
     }
     other = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = GEOSDifference(this, other);
+    ret = GEOSDifference_r(GEOS_G(handle), this, other);
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1013,7 +1020,7 @@ PHP_METHOD(Geometry, symDifference)
     }
     other = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = GEOSSymDifference(this, other);
+    ret = GEOSSymDifference_r(GEOS_G(handle), this, other);
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1028,7 +1035,7 @@ PHP_METHOD(Geometry, boundary)
 
     this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSBoundary(this);
+    ret = GEOSBoundary_r(GEOS_G(handle), this);
     if ( ret == NULL ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1056,12 +1063,12 @@ PHP_METHOD(Geometry, union)
 
     if ( zobj ) {
         other = getRelay(zobj, Geometry_ce_ptr);
-        ret = GEOSUnion(this, other);
+        ret = GEOSUnion_r(GEOS_G(handle), this, other);
     } else {
 #       ifdef HAVE_GEOS_UNARY_UNION
-        ret = GEOSUnaryUnion(this);
+        ret = GEOSUnaryUnion_r(GEOS_G(handle), this);
 #       else
-        ret = GEOSUnionCascaded(this);
+        ret = GEOSUnionCascaded_r(GEOS_G(handle), this);
 #       endif
     }
 
@@ -1082,7 +1089,7 @@ PHP_METHOD(Geometry, pointOnSurface)
 
     this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSPointOnSurface(this);
+    ret = GEOSPointOnSurface_r(GEOS_G(handle), this);
     if ( ret == NULL ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1100,7 +1107,7 @@ PHP_METHOD(Geometry, centroid)
 
     this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSGetCentroid(this);
+    ret = GEOSGetCentroid_r(GEOS_G(handle), this);
     if ( ret == NULL ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1135,13 +1142,13 @@ PHP_METHOD(Geometry, relate)
 
     if ( ! pat ) {
         /* we'll compute it */
-        pat = GEOSRelate(this, other);
+        pat = GEOSRelate_r(GEOS_G(handle), this, other);
         if ( ! pat ) RETURN_NULL(); /* should get an exception first */
         retStr = estrdup(pat);
-        GEOSFree(pat);
+        GEOSFree_r(GEOS_G(handle), pat);
         RETURN_STRING(retStr, 0);
     } else {
-        retInt = GEOSRelatePattern(this, other, pat);
+        retInt = GEOSRelatePattern_r(GEOS_G(handle), this, other, pat);
         if ( retInt == 2 ) RETURN_NULL(); /* should get an exception first */
         retBool = retInt;
         RETURN_BOOL(retBool);
@@ -1173,10 +1180,10 @@ PHP_METHOD(Geometry, relateBoundaryNodeRule)
     other = getRelay(zobj, Geometry_ce_ptr);
 
     /* we'll compute it */
-    pat = GEOSRelateBoundaryNodeRule(this, other, bnr);
+    pat = GEOSRelateBoundaryNodeRule_r(GEOS_G(handle), this, other, bnr);
     if ( ! pat ) RETURN_NULL(); /* should get an exception first */
     retStr = estrdup(pat);
-    GEOSFree(pat);
+    GEOSFree_r(GEOS_G(handle), pat);
     RETURN_STRING(retStr, 0);
 }
 #endif
@@ -1200,9 +1207,9 @@ PHP_METHOD(Geometry, simplify)
     }
 
     if ( preserveTopology ) {
-        ret = GEOSTopologyPreserveSimplify(this, tolerance);
+        ret = GEOSTopologyPreserveSimplify_r(GEOS_G(handle), this, tolerance);
     } else {
-        ret = GEOSSimplify(this, tolerance);
+        ret = GEOSSimplify_r(GEOS_G(handle), this, tolerance);
     }
 
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
@@ -1230,7 +1237,7 @@ PHP_METHOD(Geometry, setPrecision)
         RETURN_NULL();
     }
 
-    ret = GEOSGeom_setPrecision(this, gridSize, flags);
+    ret = GEOSGeom_setPrecision_r(GEOS_G(handle), this, gridSize, flags);
 
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
@@ -1251,7 +1258,7 @@ PHP_METHOD(Geometry, getPrecision)
 
     geom = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    prec = GEOSGeom_getPrecision(geom);
+    prec = GEOSGeom_getPrecision_r(GEOS_G(handle), geom);
     if ( prec < 0 ) RETURN_NULL(); /* should get an exception first */
 
     RETURN_DOUBLE(prec);
@@ -1268,11 +1275,11 @@ PHP_METHOD(Geometry, normalize)
 
     this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSGeom_clone(this);
+    ret = GEOSGeom_clone_r(GEOS_G(handle), this);
 
     if ( ! ret ) RETURN_NULL();
 
-    GEOSNormalize(ret); /* exception should be gotten automatically */
+    GEOSNormalize_r(GEOS_G(handle), ret); /* exception should be gotten automatically */
 
     /* return_value is a zval */
     object_init_ex(return_value, Geometry_ce_ptr);
@@ -1290,7 +1297,7 @@ PHP_METHOD(Geometry, extractUniquePoints)
 
     this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSGeom_extractUniquePoints(this);
+    ret = GEOSGeom_extractUniquePoints_r(GEOS_G(handle), this);
     if ( ret == NULL ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1318,7 +1325,7 @@ PHP_METHOD(Geometry, disjoint)
     }
     other = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = GEOSDisjoint(this, other);
+    ret = GEOSDisjoint_r(GEOS_G(handle), this, other);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1345,7 +1352,7 @@ PHP_METHOD(Geometry, touches)
     }
     other = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = GEOSTouches(this, other);
+    ret = GEOSTouches_r(GEOS_G(handle), this, other);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1372,7 +1379,7 @@ PHP_METHOD(Geometry, intersects)
     }
     other = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = GEOSIntersects(this, other);
+    ret = GEOSIntersects_r(GEOS_G(handle), this, other);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1399,7 +1406,7 @@ PHP_METHOD(Geometry, crosses)
     }
     other = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = GEOSCrosses(this, other);
+    ret = GEOSCrosses_r(GEOS_G(handle), this, other);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1426,7 +1433,7 @@ PHP_METHOD(Geometry, within)
     }
     other = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = GEOSWithin(this, other);
+    ret = GEOSWithin_r(GEOS_G(handle), this, other);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1453,7 +1460,7 @@ PHP_METHOD(Geometry, contains)
     }
     other = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = GEOSContains(this, other);
+    ret = GEOSContains_r(GEOS_G(handle), this, other);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1480,7 +1487,7 @@ PHP_METHOD(Geometry, overlaps)
     }
     other = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = GEOSOverlaps(this, other);
+    ret = GEOSOverlaps_r(GEOS_G(handle), this, other);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1508,7 +1515,7 @@ PHP_METHOD(Geometry, covers)
     }
     other = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = GEOSCovers(this, other);
+    ret = GEOSCovers_r(GEOS_G(handle), this, other);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1537,7 +1544,7 @@ PHP_METHOD(Geometry, coveredBy)
     }
     other = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = GEOSCoveredBy(this, other);
+    ret = GEOSCoveredBy_r(GEOS_G(handle), this, other);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1565,7 +1572,7 @@ PHP_METHOD(Geometry, equals)
     }
     other = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = GEOSEquals(this, other);
+    ret = GEOSEquals_r(GEOS_G(handle), this, other);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1594,7 +1601,7 @@ PHP_METHOD(Geometry, equalsExact)
     }
     other = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = GEOSEqualsExact(this, other, tolerance);
+    ret = GEOSEqualsExact_r(GEOS_G(handle), this, other, tolerance);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1613,7 +1620,7 @@ PHP_METHOD(Geometry, isEmpty)
 
     this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSisEmpty(this);
+    ret = GEOSisEmpty_r(GEOS_G(handle), this);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1643,12 +1650,12 @@ PHP_METHOD(Geometry, checkValidity)
         RETURN_NULL();
     }
 
-    ret = GEOSisValidDetail(this, flags, &reason, &location);
+    ret = GEOSisValidDetail_r(GEOS_G(handle), this, flags, &reason, &location);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     if ( reason ) {
         reasonVal = estrdup(reason);
-        GEOSFree(reason);
+        GEOSFree_r(GEOS_G(handle), reason);
     }
 
     if ( location ) {
@@ -1679,7 +1686,7 @@ PHP_METHOD(Geometry, isSimple)
 
     this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSisSimple(this);
+    ret = GEOSisSimple_r(GEOS_G(handle), this);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1698,7 +1705,7 @@ PHP_METHOD(Geometry, isRing)
 
     this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSisRing(this);
+    ret = GEOSisRing_r(GEOS_G(handle), this);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1717,7 +1724,7 @@ PHP_METHOD(Geometry, hasZ)
 
     this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSHasZ(this);
+    ret = GEOSHasZ_r(GEOS_G(handle), this);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1737,7 +1744,7 @@ PHP_METHOD(Geometry, isClosed)
 
     this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSisClosed(this);
+    ret = GEOSisClosed_r(GEOS_G(handle), this);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -1759,11 +1766,11 @@ PHP_METHOD(Geometry, typeName)
 
     /* TODO: define constant strings instead... */
 
-    typ = GEOSGeomType(this);
+    typ = GEOSGeomType_r(GEOS_G(handle), this);
     if ( ! typ ) RETURN_NULL(); /* should get an exception first */
 
     typVal = estrdup(typ);
-    GEOSFree(typ);
+    GEOSFree_r(GEOS_G(handle), typ);
 
     RETURN_STRING(typVal, 0);
 }
@@ -1780,7 +1787,7 @@ PHP_METHOD(Geometry, typeId)
 
     /* TODO: define constant strings instead... */
 
-    typ = GEOSGeomTypeId(this);
+    typ = GEOSGeomTypeId_r(GEOS_G(handle), this);
     if ( typ == -1 ) RETURN_NULL(); /* should get an exception first */
 
     RETURN_LONG(typ);
@@ -1796,7 +1803,7 @@ PHP_METHOD(Geometry, getSRID)
 
     geom = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSGetSRID(geom);
+    ret = GEOSGetSRID_r(GEOS_G(handle), geom);
 
     RETURN_LONG(ret);
 }
@@ -1816,7 +1823,7 @@ PHP_METHOD(Geometry, setSRID)
         RETURN_NULL();
     }
 
-    GEOSSetSRID(geom, srid);
+    GEOSSetSRID_r(GEOS_G(handle), geom, srid);
 }
 
 /**
@@ -1829,7 +1836,7 @@ PHP_METHOD(Geometry, numGeometries)
 
     geom = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSGetNumGeometries(geom);
+    ret = GEOSGetNumGeometries_r(GEOS_G(handle), geom);
     if ( ret == -1 ) RETURN_NULL(); /* should get an exception first */
 
     RETURN_LONG(ret);
@@ -1852,10 +1859,10 @@ PHP_METHOD(Geometry, geometryN)
         RETURN_NULL();
     }
 
-    if ( num >= GEOSGetNumGeometries(geom) ) RETURN_NULL();
-    c = GEOSGetGeometryN(geom, num);
+    if ( num >= GEOSGetNumGeometries_r(GEOS_G(handle), geom) ) RETURN_NULL();
+    c = GEOSGetGeometryN_r(GEOS_G(handle), geom, num);
     if ( ! c ) RETURN_NULL(); /* should get an exception first */
-    cc = GEOSGeom_clone(c);
+    cc = GEOSGeom_clone_r(GEOS_G(handle), c);
     if ( ! cc ) RETURN_NULL(); /* should get an exception first */
 
     object_init_ex(return_value, Geometry_ce_ptr);
@@ -1872,7 +1879,7 @@ PHP_METHOD(Geometry, numInteriorRings)
 
     geom = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSGetNumInteriorRings(geom);
+    ret = GEOSGetNumInteriorRings_r(GEOS_G(handle), geom);
     if ( ret == -1 ) RETURN_NULL(); /* should get an exception first */
 
     RETURN_LONG(ret);
@@ -1889,7 +1896,7 @@ PHP_METHOD(Geometry, numPoints)
 
     geom = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSGeomGetNumPoints(geom);
+    ret = GEOSGeomGetNumPoints_r(GEOS_G(handle), geom);
     if ( ret == -1 ) RETURN_NULL(); /* should get an exception first */
 
     RETURN_LONG(ret);
@@ -1908,7 +1915,7 @@ PHP_METHOD(Geometry, getX)
 
     geom = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSGeomGetX(geom, &x);
+    ret = GEOSGeomGetX_r(GEOS_G(handle), geom, &x);
     if ( ret == -1 ) RETURN_NULL(); /* should get an exception first */
 
     RETURN_DOUBLE(x);
@@ -1927,7 +1934,7 @@ PHP_METHOD(Geometry, getY)
 
     geom = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSGeomGetY(geom, &y);
+    ret = GEOSGeomGetY_r(GEOS_G(handle), geom, &y);
     if ( ret == -1 ) RETURN_NULL(); /* should get an exception first */
 
     RETURN_DOUBLE(y);
@@ -1951,10 +1958,10 @@ PHP_METHOD(Geometry, interiorRingN)
         RETURN_NULL();
     }
 
-    if ( num >= GEOSGetNumInteriorRings(geom) ) RETURN_NULL();
-    c = GEOSGetInteriorRingN(geom, num);
+    if ( num >= GEOSGetNumInteriorRings_r(GEOS_G(handle), geom) ) RETURN_NULL();
+    c = GEOSGetInteriorRingN_r(GEOS_G(handle), geom, num);
     if ( ! c ) RETURN_NULL(); /* should get an exception first */
-    cc = GEOSGeom_clone(c);
+    cc = GEOSGeom_clone_r(GEOS_G(handle), c);
     if ( ! cc ) RETURN_NULL(); /* should get an exception first */
 
     object_init_ex(return_value, Geometry_ce_ptr);
@@ -1972,9 +1979,9 @@ PHP_METHOD(Geometry, exteriorRing)
 
     geom = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    c = GEOSGetExteriorRing(geom);
+    c = GEOSGetExteriorRing_r(GEOS_G(handle), geom);
     if ( ! c ) RETURN_NULL(); /* should get an exception first */
-    cc = GEOSGeom_clone(c);
+    cc = GEOSGeom_clone_r(GEOS_G(handle), c);
     if ( ! cc ) RETURN_NULL(); /* should get an exception first */
 
     object_init_ex(return_value, Geometry_ce_ptr);
@@ -1991,7 +1998,7 @@ PHP_METHOD(Geometry, numCoordinates)
 
     geom = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSGetNumCoordinates(geom);
+    ret = GEOSGetNumCoordinates_r(GEOS_G(handle), geom);
     if ( ret == -1 ) RETURN_NULL(); /* should get an exception first */
 
     RETURN_LONG(ret);
@@ -2008,7 +2015,7 @@ PHP_METHOD(Geometry, dimension)
 
     geom = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSGeom_getDimensions(geom);
+    ret = GEOSGeom_getDimensions_r(GEOS_G(handle), geom);
     if ( ret == -1 ) RETURN_NULL(); /* should get an exception first */
 
     RETURN_LONG(ret);
@@ -2025,7 +2032,7 @@ PHP_METHOD(Geometry, coordinateDimension)
 
     geom = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSGeom_getCoordinateDimension(geom);
+    ret = GEOSGeom_getCoordinateDimension_r(GEOS_G(handle), geom);
     if ( ret == -1 ) RETURN_NULL(); /* should get an exception first */
 
     RETURN_LONG(ret);
@@ -2049,8 +2056,8 @@ PHP_METHOD(Geometry, pointN)
         RETURN_NULL();
     }
 
-    if ( num >= GEOSGeomGetNumPoints(geom) ) RETURN_NULL();
-    c = GEOSGeomGetPointN(geom, num);
+    if ( num >= GEOSGeomGetNumPoints_r(GEOS_G(handle), geom) ) RETURN_NULL();
+    c = GEOSGeomGetPointN_r(GEOS_G(handle), geom, num);
     if ( ! c ) RETURN_NULL(); /* should get an exception first */
 
     object_init_ex(return_value, Geometry_ce_ptr);
@@ -2068,7 +2075,7 @@ PHP_METHOD(Geometry, startPoint)
 
     geom = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    c = GEOSGeomGetStartPoint(geom);
+    c = GEOSGeomGetStartPoint_r(GEOS_G(handle), geom);
     if ( ! c ) RETURN_NULL(); /* should get an exception first */
 
     object_init_ex(return_value, Geometry_ce_ptr);
@@ -2085,7 +2092,7 @@ PHP_METHOD(Geometry, endPoint)
 
     geom = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    c = GEOSGeomGetEndPoint(geom);
+    c = GEOSGeomGetEndPoint_r(GEOS_G(handle), geom);
     if ( ! c ) RETURN_NULL(); /* should get an exception first */
 
     object_init_ex(return_value, Geometry_ce_ptr);
@@ -2103,7 +2110,7 @@ PHP_METHOD(Geometry, area)
 
     geom = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSArea(geom, &area);
+    ret = GEOSArea_r(GEOS_G(handle), geom, &area);
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
     RETURN_DOUBLE(area);
@@ -2120,7 +2127,7 @@ PHP_METHOD(Geometry, length)
 
     geom = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSLength(geom, &length);
+    ret = GEOSLength_r(GEOS_G(handle), geom, &length);
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
     RETURN_DOUBLE(length);
@@ -2147,7 +2154,7 @@ PHP_METHOD(Geometry, distance)
 
     other = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = GEOSDistance(this, other, &dist);
+    ret = GEOSDistance_r(GEOS_G(handle), this, other, &dist);
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
     RETURN_DOUBLE(dist);
@@ -2174,7 +2181,7 @@ PHP_METHOD(Geometry, hausdorffDistance)
 
     other = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = GEOSHausdorffDistance(this, other, &dist);
+    ret = GEOSHausdorffDistance_r(GEOS_G(handle), this, other, &dist);
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
     RETURN_DOUBLE(dist);
@@ -2197,7 +2204,7 @@ PHP_METHOD(Geometry, snapTo)
     }
     other = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = GEOSSnap(this, other, tolerance);
+    ret = GEOSSnap_r(GEOS_G(handle), this, other, tolerance);
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -2214,7 +2221,7 @@ PHP_METHOD(Geometry, node)
 
     this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
-    ret = GEOSNode(this);
+    ret = GEOSNode_r(GEOS_G(handle), this);
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -2244,7 +2251,7 @@ static void
 WKTReader_dtor (void *object TSRMLS_DC)
 {
     Proxy *obj = (Proxy *)object;
-    GEOSWKTReader_destroy((GEOSWKTReader*)obj->relay);
+    GEOSWKTReader_destroy_r(GEOS_G(handle), (GEOSWKTReader*)obj->relay);
 
     zend_hash_destroy(obj->std.properties);
     FREE_HASHTABLE(obj->std.properties);
@@ -2264,7 +2271,7 @@ PHP_METHOD(WKTReader, __construct)
     GEOSWKTReader* obj;
     zval *object = getThis();
 
-    obj = GEOSWKTReader_create();
+    obj = GEOSWKTReader_create_r(GEOS_G(handle));
     if ( ! obj ) {
         php_error_docref(NULL TSRMLS_CC, E_ERROR,
                 "GEOSWKTReader_create() failed (didn't initGEOS?)");
@@ -2288,7 +2295,7 @@ PHP_METHOD(WKTReader, read)
         RETURN_NULL();
     }
 
-    geom = GEOSWKTReader_read(reader, wkt);
+    geom = GEOSWKTReader_read_r(GEOS_G(handle), reader, wkt);
     /* we'll probably get an exception if geom is null */
     if ( ! geom ) RETURN_NULL();
 
@@ -2358,7 +2365,7 @@ static void
 WKTWriter_dtor (void *object TSRMLS_DC)
 {
     Proxy *obj = (Proxy *)object;
-    GEOSWKTWriter_destroy((GEOSWKTWriter*)obj->relay);
+    GEOSWKTWriter_destroy_r(GEOS_G(handle), (GEOSWKTWriter*)obj->relay);
 
     zend_hash_destroy(obj->std.properties);
     FREE_HASHTABLE(obj->std.properties);
@@ -2377,7 +2384,7 @@ PHP_METHOD(WKTWriter, __construct)
     GEOSWKTWriter* obj;
     zval *object = getThis();
 
-    obj = GEOSWKTWriter_create();
+    obj = GEOSWKTWriter_create_r(GEOS_G(handle));
     if ( ! obj ) {
         php_error_docref(NULL TSRMLS_CC, E_ERROR,
                 "GEOSWKTWriter_create() failed (didn't initGEOS?)");
@@ -2404,12 +2411,12 @@ PHP_METHOD(WKTWriter, write)
 
     geom = getRelay(zobj, Geometry_ce_ptr);
 
-    wkt = GEOSWKTWriter_write(writer, geom);
+    wkt = GEOSWKTWriter_write_r(GEOS_G(handle), writer, geom);
     /* we'll probably get an exception if wkt is null */
     if ( ! wkt ) RETURN_NULL();
 
     retstr = estrdup(wkt);
-    GEOSFree(wkt);
+    GEOSFree_r(GEOS_G(handle), wkt);
 
     RETURN_STRING(retstr, 0);
 }
@@ -2430,7 +2437,7 @@ PHP_METHOD(WKTWriter, setTrim)
     }
 
     trim = trimval;
-    GEOSWKTWriter_setTrim(writer, trim);
+    GEOSWKTWriter_setTrim_r(GEOS_G(handle), writer, trim);
 }
 #endif
 
@@ -2448,7 +2455,7 @@ PHP_METHOD(WKTWriter, setRoundingPrecision)
         RETURN_NULL();
     }
 
-    GEOSWKTWriter_setRoundingPrecision(writer, prec);
+    GEOSWKTWriter_setRoundingPrecision_r(GEOS_G(handle), writer, prec);
 }
 #endif
 
@@ -2469,7 +2476,7 @@ PHP_METHOD(WKTWriter, setOutputDimension)
         RETURN_NULL();
     }
 
-    GEOSWKTWriter_setOutputDimension(writer, dim);
+    GEOSWKTWriter_setOutputDimension_r(GEOS_G(handle), writer, dim);
 }
 #endif
 
@@ -2484,7 +2491,7 @@ PHP_METHOD(WKTWriter, getOutputDimension)
 
     writer = (GEOSWKTWriter*)getRelay(getThis(), WKTWriter_ce_ptr);
 
-    ret = GEOSWKTWriter_getOutputDimension(writer);
+    ret = GEOSWKTWriter_getOutputDimension_r(GEOS_G(handle), writer);
 
     RETURN_LONG(ret);
 }
@@ -2506,7 +2513,7 @@ PHP_METHOD(WKTWriter, setOld3D)
     }
 
     val = bval;
-    GEOSWKTWriter_setOld3D(writer, val);
+    GEOSWKTWriter_setOld3D_r(GEOS_G(handle), writer, val);
 }
 #endif
 
@@ -2543,7 +2550,7 @@ static void
 WKBWriter_dtor (void *object TSRMLS_DC)
 {
     Proxy *obj = (Proxy *)object;
-    GEOSWKBWriter_destroy((GEOSWKBWriter*)obj->relay);
+    GEOSWKBWriter_destroy_r(GEOS_G(handle), (GEOSWKBWriter*)obj->relay);
 
     zend_hash_destroy(obj->std.properties);
     FREE_HASHTABLE(obj->std.properties);
@@ -2565,7 +2572,7 @@ PHP_METHOD(WKBWriter, __construct)
     GEOSWKBWriter* obj;
     zval *object = getThis();
 
-    obj = GEOSWKBWriter_create();
+    obj = GEOSWKBWriter_create_r(GEOS_G(handle));
     if ( ! obj ) {
         php_error_docref(NULL TSRMLS_CC, E_ERROR,
                 "GEOSWKBWriter_create() failed (didn't initGEOS?)");
@@ -2584,7 +2591,7 @@ PHP_METHOD(WKBWriter, getOutputDimension)
 
     writer = (GEOSWKBWriter*)getRelay(getThis(), WKBWriter_ce_ptr);
 
-    ret = GEOSWKBWriter_getOutputDimension(writer);
+    ret = GEOSWKBWriter_getOutputDimension_r(GEOS_G(handle), writer);
 
     RETURN_LONG(ret);
 }
@@ -2605,7 +2612,7 @@ PHP_METHOD(WKBWriter, setOutputDimension)
         RETURN_NULL();
     }
 
-    GEOSWKBWriter_setOutputDimension(writer, dim);
+    GEOSWKBWriter_setOutputDimension_r(GEOS_G(handle), writer, dim);
 
 }
 
@@ -2631,12 +2638,12 @@ PHP_METHOD(WKBWriter, write)
 
     geom = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = (char*)GEOSWKBWriter_write(writer, geom, &retsize);
+    ret = (char*)GEOSWKBWriter_write_r(GEOS_G(handle), writer, geom, &retsize);
     /* we'll probably get an exception if ret is null */
     if ( ! ret ) RETURN_NULL();
 
     retstr = estrndup(ret, retsize);
-    GEOSFree(ret);
+    GEOSFree_r(GEOS_G(handle), ret);
 
     RETURN_STRINGL(retstr, retsize, 0);
 }
@@ -2663,12 +2670,12 @@ PHP_METHOD(WKBWriter, writeHEX)
 
     geom = getRelay(zobj, Geometry_ce_ptr);
 
-    ret = (char*)GEOSWKBWriter_writeHEX(writer, geom, &retsize);
+    ret = (char*)GEOSWKBWriter_writeHEX_r(GEOS_G(handle), writer, geom, &retsize);
     /* we'll probably get an exception if ret is null */
     if ( ! ret ) RETURN_NULL();
 
     retstr = estrndup(ret, retsize);
-    GEOSFree(ret);
+    GEOSFree_r(GEOS_G(handle), ret);
 
     RETURN_STRING(retstr, 0);
 }
@@ -2683,7 +2690,7 @@ PHP_METHOD(WKBWriter, getByteOrder)
 
     writer = (GEOSWKBWriter*)getRelay(getThis(), WKBWriter_ce_ptr);
 
-    ret = GEOSWKBWriter_getByteOrder(writer);
+    ret = GEOSWKBWriter_getByteOrder_r(GEOS_G(handle), writer);
 
     RETURN_LONG(ret);
 }
@@ -2704,7 +2711,7 @@ PHP_METHOD(WKBWriter, setByteOrder)
         RETURN_NULL();
     }
 
-    GEOSWKBWriter_setByteOrder(writer, dim);
+    GEOSWKBWriter_setByteOrder_r(GEOS_G(handle), writer, dim);
 
 }
 
@@ -2719,7 +2726,7 @@ PHP_METHOD(WKBWriter, getIncludeSRID)
 
     writer = (GEOSWKBWriter*)getRelay(getThis(), WKBWriter_ce_ptr);
 
-    ret = GEOSWKBWriter_getIncludeSRID(writer);
+    ret = GEOSWKBWriter_getIncludeSRID_r(GEOS_G(handle), writer);
     retBool = ret;
 
     RETURN_BOOL(retBool);
@@ -2743,7 +2750,7 @@ PHP_METHOD(WKBWriter, setIncludeSRID)
     }
 
     inc = incVal;
-    GEOSWKBWriter_setIncludeSRID(writer, inc);
+    GEOSWKBWriter_setIncludeSRID_r(GEOS_G(handle), writer, inc);
 }
 
 /* -- class GEOSWKBReader -------------------- */
@@ -2767,7 +2774,7 @@ static void
 WKBReader_dtor (void *object TSRMLS_DC)
 {
     Proxy *obj = (Proxy *)object;
-    GEOSWKBReader_destroy((GEOSWKBReader*)obj->relay);
+    GEOSWKBReader_destroy_r(GEOS_G(handle), (GEOSWKBReader*)obj->relay);
 
     zend_hash_destroy(obj->std.properties);
     FREE_HASHTABLE(obj->std.properties);
@@ -2787,7 +2794,7 @@ PHP_METHOD(WKBReader, __construct)
     GEOSWKBReader* obj;
     zval *object = getThis();
 
-    obj = GEOSWKBReader_create();
+    obj = GEOSWKBReader_create_r(GEOS_G(handle));
     if ( ! obj ) {
         php_error_docref(NULL TSRMLS_CC, E_ERROR,
                 "GEOSWKBReader_create() failed (didn't initGEOS?)");
@@ -2811,7 +2818,7 @@ PHP_METHOD(WKBReader, read)
         RETURN_NULL();
     }
 
-    geom = GEOSWKBReader_read(reader, wkb, wkblen);
+    geom = GEOSWKBReader_read_r(GEOS_G(handle), reader, wkb, wkblen);
     /* we'll probably get an exception if geom is null */
     if ( ! geom ) RETURN_NULL();
 
@@ -2836,7 +2843,7 @@ PHP_METHOD(WKBReader, readHEX)
         RETURN_NULL();
     }
 
-    geom = GEOSWKBReader_readHEX(reader, wkb, wkblen);
+    geom = GEOSWKBReader_readHEX_r(GEOS_G(handle), reader, wkb, wkblen);
     /* we'll probably get an exception if geom is null */
     if ( ! geom ) RETURN_NULL();
 
@@ -2900,7 +2907,7 @@ PHP_FUNCTION(GEOSPolygonize)
     }
     this = getRelay(zobj, Geometry_ce_ptr);
 
-    rings = GEOSPolygonize_full(this, &cut_edges, &dangles, &invalid_rings);
+    rings = GEOSPolygonize_full_r(GEOS_G(handle), this, &cut_edges, &dangles, &invalid_rings);
     if ( ! rings ) RETURN_NULL(); /* should get an exception first */
 
     /* return value should be an array */
@@ -2909,25 +2916,25 @@ PHP_FUNCTION(GEOSPolygonize)
     MAKE_STD_ZVAL(array_elem);
     array_init(array_elem);
     dumpGeometry(rings, array_elem);
-    GEOSGeom_destroy(rings);
+    GEOSGeom_destroy_r(GEOS_G(handle), rings);
     add_assoc_zval(return_value, "rings", array_elem);
 
     MAKE_STD_ZVAL(array_elem);
     array_init(array_elem);
     dumpGeometry(cut_edges, array_elem);
-    GEOSGeom_destroy(cut_edges);
+    GEOSGeom_destroy_r(GEOS_G(handle), cut_edges);
     add_assoc_zval(return_value, "cut_edges", array_elem);
 
     MAKE_STD_ZVAL(array_elem);
     array_init(array_elem);
     dumpGeometry(dangles, array_elem);
-    GEOSGeom_destroy(dangles);
+    GEOSGeom_destroy_r(GEOS_G(handle), dangles);
     add_assoc_zval(return_value, "dangles", array_elem);
 
     MAKE_STD_ZVAL(array_elem);
     array_init(array_elem);
     dumpGeometry(invalid_rings, array_elem);
-    GEOSGeom_destroy(invalid_rings);
+    GEOSGeom_destroy_r(GEOS_G(handle), invalid_rings);
     add_assoc_zval(return_value, "invalid_rings", array_elem);
 
 }
@@ -2948,13 +2955,13 @@ PHP_FUNCTION(GEOSLineMerge)
     }
     geom_in = getRelay(zobj, Geometry_ce_ptr);
 
-    geom_out = GEOSLineMerge(geom_in);
+    geom_out = GEOSLineMerge_r(GEOS_G(handle), geom_in);
     if ( ! geom_out ) RETURN_NULL(); /* should get an exception first */
 
     /* return value should be an array */
     array_init(return_value);
     dumpGeometry(geom_out, return_value);
-    GEOSGeom_destroy(geom_out);
+    GEOSGeom_destroy_r(GEOS_G(handle), geom_out);
 }
 
 /**
@@ -2976,7 +2983,7 @@ PHP_FUNCTION(GEOSSharedPaths)
     geom_in_1 = getRelay(zobj1, Geometry_ce_ptr);
     geom_in_2 = getRelay(zobj2, Geometry_ce_ptr);
 
-    geom_out = GEOSSharedPaths(geom_in_1, geom_in_2);
+    geom_out = GEOSSharedPaths_r(GEOS_G(handle), geom_in_1, geom_in_2);
     if ( ! geom_out ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -3011,7 +3018,7 @@ PHP_METHOD(Geometry, delaunayTriangulation)
         RETURN_NULL();
     }
 
-    ret = GEOSDelaunayTriangulation(this, tolerance, edgeonly ? 1 : 0);
+    ret = GEOSDelaunayTriangulation_r(GEOS_G(handle), this, tolerance, edgeonly ? 1 : 0);
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -3052,7 +3059,7 @@ PHP_METHOD(Geometry, voronoiDiagram)
     }
 
     if ( zobj ) env = getRelay(zobj, Geometry_ce_ptr);
-    ret = GEOSVoronoiDiagram(this, env, tolerance, edgeonly ? 1 : 0);
+    ret = GEOSVoronoiDiagram_r(GEOS_G(handle), this, env, tolerance, edgeonly ? 1 : 0);
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -3080,7 +3087,7 @@ PHP_FUNCTION(GEOSRelateMatch)
         RETURN_NULL();
     }
 
-    ret = GEOSRelatePatternMatch(mat, pat);
+    ret = GEOSRelatePatternMatch_r(GEOS_G(handle), mat, pat);
     if ( ret == 2 ) RETURN_NULL(); /* should get an exception first */
 
     /* return_value is a zval */
@@ -3212,15 +3219,21 @@ PHP_MSHUTDOWN_FUNCTION(geos)
 /* per-request initialization */
 PHP_RINIT_FUNCTION(geos)
 {
-    initGEOS(noticeHandler, errorHandler);
+    GEOS_G(handle) = initGEOS_r(noticeHandler, errorHandler);
     return SUCCESS;
 }
 
 /* pre-request destruction */
 PHP_RSHUTDOWN_FUNCTION(geos)
 {
-    finishGEOS();
+    finishGEOS_r(GEOS_G(handle));
     return SUCCESS;
+}
+
+/* global initialization */
+PHP_GINIT_FUNCTION(geos)
+{
+    geos_globals->handle = NULL;
 }
 
 /* module info */
@@ -3233,4 +3246,3 @@ PHP_MINFO_FUNCTION(geos)
         "Version", PHP_GEOS_VERSION);
     php_info_print_table_end();
 }
-

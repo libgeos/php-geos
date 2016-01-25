@@ -35,7 +35,21 @@
 
 #include "php.h"
 
+#ifdef ZTS
+#include "TSRM.h"
+#endif
+
 extern zend_module_entry geos_module_entry;
 #define phpext_geos_ptr &geos_module_entry;
+
+#ifdef ZTS
+#define GEOS_G(v) TSRMG(geos_globals_id, zend_geos_globals *, v)
+#else
+#define GEOS_G(v) (geos_globals.v)
+#endif
+
+ZEND_BEGIN_MODULE_GLOBALS(geos)
+GEOSContextHandle_t handle;
+ZEND_END_MODULE_GLOBALS(geos)
 
 #endif /* PHP_GEOS_H */
