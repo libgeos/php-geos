@@ -494,6 +494,8 @@ static GEOSWKBWriter* Geometry_serializer = 0;
 
 static GEOSWKBWriter* getGeometrySerializer()
 {
+    TSRMLS_FETCH();
+
     if ( ! Geometry_serializer ) {
         Geometry_serializer = GEOSWKBWriter_create_r(GEOS_G(handle));
         GEOSWKBWriter_setIncludeSRID_r(GEOS_G(handle), Geometry_serializer, 1);
@@ -504,6 +506,8 @@ static GEOSWKBWriter* getGeometrySerializer()
 
 static void delGeometrySerializer()
 {
+    TSRMLS_FETCH();
+
     if ( Geometry_serializer ) {
         GEOSWKBWriter_destroy_r(GEOS_G(handle), Geometry_serializer);
     }
@@ -515,6 +519,8 @@ static GEOSWKBReader* Geometry_deserializer = 0;
 
 static GEOSWKBReader* getGeometryDeserializer()
 {
+    TSRMLS_FETCH();
+
     if ( ! Geometry_deserializer ) {
         Geometry_deserializer = GEOSWKBReader_create_r(GEOS_G(handle));
     }
@@ -523,6 +529,8 @@ static GEOSWKBReader* getGeometryDeserializer()
 
 static void delGeometryDeserializer()
 {
+    TSRMLS_FETCH();
+
     if ( Geometry_deserializer ) {
         GEOSWKBReader_destroy_r(GEOS_G(handle), Geometry_deserializer);
     }
