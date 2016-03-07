@@ -1,377 +1,14 @@
+--TEST--
+Geometry tests
+--SKIPIF--
+<?php if (!extension_loaded('geos')) print 'skip'; ?>
+--FILE--
 <?php
 
-# Run with:
-# php -n -d enable_dl=On -d extension_dir=.. test.php
+require './tests/TestHelper.php';
 
-dl("geos.so");
-
-if ( version_compare(PHPUnit_Runner_Version::id(), '3.6') < 0 )
-    require_once 'PHPUnit/Framework.php';
-
-# hex2bin for PHP < 5.4
-# https://gist.github.com/mcrumley/5672621
-if (!function_exists('hex2bin')) {
-  function hex2bin($str) {
-    $map = array(
-      '00'=>"\x00", '10'=>"\x10", '20'=>"\x20", '30'=>"\x30", '40'=>"\x40", '50'=>"\x50", '60'=>"\x60", '70'=>"\x70",
-      '01'=>"\x01", '11'=>"\x11", '21'=>"\x21", '31'=>"\x31", '41'=>"\x41", '51'=>"\x51", '61'=>"\x61", '71'=>"\x71",
-      '02'=>"\x02", '12'=>"\x12", '22'=>"\x22", '32'=>"\x32", '42'=>"\x42", '52'=>"\x52", '62'=>"\x62", '72'=>"\x72",
-      '03'=>"\x03", '13'=>"\x13", '23'=>"\x23", '33'=>"\x33", '43'=>"\x43", '53'=>"\x53", '63'=>"\x63", '73'=>"\x73",
-      '04'=>"\x04", '14'=>"\x14", '24'=>"\x24", '34'=>"\x34", '44'=>"\x44", '54'=>"\x54", '64'=>"\x64", '74'=>"\x74",
-      '05'=>"\x05", '15'=>"\x15", '25'=>"\x25", '35'=>"\x35", '45'=>"\x45", '55'=>"\x55", '65'=>"\x65", '75'=>"\x75",
-      '06'=>"\x06", '16'=>"\x16", '26'=>"\x26", '36'=>"\x36", '46'=>"\x46", '56'=>"\x56", '66'=>"\x66", '76'=>"\x76",
-      '07'=>"\x07", '17'=>"\x17", '27'=>"\x27", '37'=>"\x37", '47'=>"\x47", '57'=>"\x57", '67'=>"\x67", '77'=>"\x77",
-      '08'=>"\x08", '18'=>"\x18", '28'=>"\x28", '38'=>"\x38", '48'=>"\x48", '58'=>"\x58", '68'=>"\x68", '78'=>"\x78",
-      '09'=>"\x09", '19'=>"\x19", '29'=>"\x29", '39'=>"\x39", '49'=>"\x49", '59'=>"\x59", '69'=>"\x69", '79'=>"\x79",
-      '0a'=>"\x0a", '1a'=>"\x1a", '2a'=>"\x2a", '3a'=>"\x3a", '4a'=>"\x4a", '5a'=>"\x5a", '6a'=>"\x6a", '7a'=>"\x7a",
-      '0b'=>"\x0b", '1b'=>"\x1b", '2b'=>"\x2b", '3b'=>"\x3b", '4b'=>"\x4b", '5b'=>"\x5b", '6b'=>"\x6b", '7b'=>"\x7b",
-      '0c'=>"\x0c", '1c'=>"\x1c", '2c'=>"\x2c", '3c'=>"\x3c", '4c'=>"\x4c", '5c'=>"\x5c", '6c'=>"\x6c", '7c'=>"\x7c",
-      '0d'=>"\x0d", '1d'=>"\x1d", '2d'=>"\x2d", '3d'=>"\x3d", '4d'=>"\x4d", '5d'=>"\x5d", '6d'=>"\x6d", '7d'=>"\x7d",
-      '0e'=>"\x0e", '1e'=>"\x1e", '2e'=>"\x2e", '3e'=>"\x3e", '4e'=>"\x4e", '5e'=>"\x5e", '6e'=>"\x6e", '7e'=>"\x7e",
-      '0f'=>"\x0f", '1f'=>"\x1f", '2f'=>"\x2f", '3f'=>"\x3f", '4f'=>"\x4f", '5f'=>"\x5f", '6f'=>"\x6f", '7f'=>"\x7f",
-
-      '80'=>"\x80", '90'=>"\x90", 'a0'=>"\xa0", 'b0'=>"\xb0", 'c0'=>"\xc0", 'd0'=>"\xd0", 'e0'=>"\xe0", 'f0'=>"\xf0",
-      '81'=>"\x81", '91'=>"\x91", 'a1'=>"\xa1", 'b1'=>"\xb1", 'c1'=>"\xc1", 'd1'=>"\xd1", 'e1'=>"\xe1", 'f1'=>"\xf1",
-      '82'=>"\x82", '92'=>"\x92", 'a2'=>"\xa2", 'b2'=>"\xb2", 'c2'=>"\xc2", 'd2'=>"\xd2", 'e2'=>"\xe2", 'f2'=>"\xf2",
-      '83'=>"\x83", '93'=>"\x93", 'a3'=>"\xa3", 'b3'=>"\xb3", 'c3'=>"\xc3", 'd3'=>"\xd3", 'e3'=>"\xe3", 'f3'=>"\xf3",
-      '84'=>"\x84", '94'=>"\x94", 'a4'=>"\xa4", 'b4'=>"\xb4", 'c4'=>"\xc4", 'd4'=>"\xd4", 'e4'=>"\xe4", 'f4'=>"\xf4",
-      '85'=>"\x85", '95'=>"\x95", 'a5'=>"\xa5", 'b5'=>"\xb5", 'c5'=>"\xc5", 'd5'=>"\xd5", 'e5'=>"\xe5", 'f5'=>"\xf5",
-      '86'=>"\x86", '96'=>"\x96", 'a6'=>"\xa6", 'b6'=>"\xb6", 'c6'=>"\xc6", 'd6'=>"\xd6", 'e6'=>"\xe6", 'f6'=>"\xf6",
-      '87'=>"\x87", '97'=>"\x97", 'a7'=>"\xa7", 'b7'=>"\xb7", 'c7'=>"\xc7", 'd7'=>"\xd7", 'e7'=>"\xe7", 'f7'=>"\xf7",
-      '88'=>"\x88", '98'=>"\x98", 'a8'=>"\xa8", 'b8'=>"\xb8", 'c8'=>"\xc8", 'd8'=>"\xd8", 'e8'=>"\xe8", 'f8'=>"\xf8",
-      '89'=>"\x89", '99'=>"\x99", 'a9'=>"\xa9", 'b9'=>"\xb9", 'c9'=>"\xc9", 'd9'=>"\xd9", 'e9'=>"\xe9", 'f9'=>"\xf9",
-      '8a'=>"\x8a", '9a'=>"\x9a", 'aa'=>"\xaa", 'ba'=>"\xba", 'ca'=>"\xca", 'da'=>"\xda", 'ea'=>"\xea", 'fa'=>"\xfa",
-      '8b'=>"\x8b", '9b'=>"\x9b", 'ab'=>"\xab", 'bb'=>"\xbb", 'cb'=>"\xcb", 'db'=>"\xdb", 'eb'=>"\xeb", 'fb'=>"\xfb",
-      '8c'=>"\x8c", '9c'=>"\x9c", 'ac'=>"\xac", 'bc'=>"\xbc", 'cc'=>"\xcc", 'dc'=>"\xdc", 'ec'=>"\xec", 'fc'=>"\xfc",
-      '8d'=>"\x8d", '9d'=>"\x9d", 'ad'=>"\xad", 'bd'=>"\xbd", 'cd'=>"\xcd", 'dd'=>"\xdd", 'ed'=>"\xed", 'fd'=>"\xfd",
-      '8e'=>"\x8e", '9e'=>"\x9e", 'ae'=>"\xae", 'be'=>"\xbe", 'ce'=>"\xce", 'de'=>"\xde", 'ee'=>"\xee", 'fe'=>"\xfe",
-      '8f'=>"\x8f", '9f'=>"\x9f", 'af'=>"\xaf", 'bf'=>"\xbf", 'cf'=>"\xcf", 'df'=>"\xdf", 'ef'=>"\xef", 'ff'=>"\xff",
-    );
-    $strlen = strlen($str);
-    if ($strlen % 2 !== 0) {
-      user_error('Hexadecimal input string must have an even length', E_USER_WARNING);
-      return false;
-    }
-    if (strspn($str, '0123456789ABCDEFabcdef') !== $strlen) {
-      return false;
-    }
-    return strtr(strtolower($str), $map);
-  }
-}
-
-
-class test extends PHPUnit_Framework_TestCase
+class GeometryTest extends GEOSTest
 {
-    # This method override is needed to support phpunit < 3.5 (Ubuntu 10.04 ships 3.4)
-    static public function assertType($x, $y)
-    {
-        #global $phpunit_version;
-        if ( version_compare(PHPUnit_Runner_Version::id(), '3.5') < 0 )
-            return PHPUnit_Framework_TestCase::assertType($x, $y);
-        else return PHPUnit_Framework_TestCase::assertInternalType($x, $y);
-    }
-
-    public function testGEOSVersion()
-    {
-        $this->assertContains('-CAPI-', GEOSVersion());
-    }
-
-    public function testConstants()
-    {
-        $this->assertEquals(1, GEOSBUF_CAP_ROUND);
-        $this->assertEquals(2, GEOSBUF_CAP_FLAT);
-        $this->assertEquals(3, GEOSBUF_CAP_SQUARE);
-
-        $this->assertEquals(1, GEOSBUF_JOIN_ROUND);
-        $this->assertEquals(2, GEOSBUF_JOIN_MITRE);
-        $this->assertEquals(3, GEOSBUF_JOIN_BEVEL);
-
-        $this->assertEquals(0, GEOS_POINT);
-        $this->assertEquals(1, GEOS_LINESTRING);
-        $this->assertEquals(2, GEOS_LINEARRING);
-        $this->assertEquals(3, GEOS_POLYGON);
-        $this->assertEquals(4, GEOS_MULTIPOINT);
-        $this->assertEquals(5, GEOS_MULTILINESTRING);
-        $this->assertEquals(6, GEOS_MULTIPOLYGON);
-        $this->assertEquals(7, GEOS_GEOMETRYCOLLECTION);
-
-        $this->assertEquals(1, GEOSVALID_ALLOW_SELFTOUCHING_RING_FORMING_HOLE);
-
-        $this->assertEquals(1, GEOSRELATE_BNR_MOD2);
-        $this->assertEquals(1, GEOSRELATE_BNR_OGC);
-        $this->assertEquals(2, GEOSRELATE_BNR_ENDPOINT);
-        $this->assertEquals(3, GEOSRELATE_BNR_MULTIVALENT_ENDPOINT);
-        $this->assertEquals(4, GEOSRELATE_BNR_MONOVALENT_ENDPOINT);
-    }
-
-    public function testWKTReader__construct()
-    {
-        $reader = new GEOSWKTReader();
-        $this->assertNotNull($reader);
-    }
-
-    public function testWKTReader_read()
-    {
-        $reader = new GEOSWKTReader();
-
-        /* Good WKT */
-        $geom = $reader->read('POINT(0 0)');
-        $this->assertNotNull($geom);
-        $geom = $reader->read('POINT(0 0 0)');
-        $this->assertNotNull($geom);
-        $geom = $reader->read('POINT Z (0 0 0)');
-        $this->assertNotNull($geom);
-        $geom = $reader->read('POINT EMPTY');
-        $this->assertNotNull($geom);
-        $geom = $reader->read('MULTIPOINT(0 0 1, 2 3 4)');
-        $this->assertNotNull($geom);
-        $geom = $reader->read('MULTIPOINT Z (0 0 1, 2 3 4)');
-        $this->assertNotNull($geom);
-        $geom = $reader->read('MULTIPOINT((0 0), (2 3))');
-        $this->assertNotNull($geom);
-        $geom = $reader->read('MULTIPOINT EMPTY');
-        $this->assertNotNull($geom);
-        $geom = $reader->read('LINESTRING(0 0 1, 2 3 4)');
-        $this->assertNotNull($geom);
-        $geom = $reader->read('LINESTRING EMPTY');
-        $this->assertNotNull($geom);
-        $geom = $reader->read('MULTILINESTRING((0 0 1, 2 3 4),
-                                               (10 10 2, 3 4 5))');
-        $this->assertNotNull($geom);
-        $geom = $reader->read('MULTILINESTRING Z ((0 0 1, 2 3 4),
-                                               (10 10 2, 3 4 5))');
-        $this->assertNotNull($geom);
-        $geom = $reader->read('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))');
-        $this->assertNotNull($geom);
-        $geom = $reader->read('POLYGON EMPTY');
-        $this->assertNotNull($geom);
-        $geom = $reader->read('MULTIPOLYGON(
-                                ((0 0, 1 0, 1 1, 0 1, 0 0)),
-                                ((10 10, 10 14, 14 14, 14 10, 10 10),
-                                    (11 11, 11 12, 12 12, 12 11, 11 11))
-                               )');
-        $this->assertNotNull($geom);
-        $geom = $reader->read('MULTIPOLYGON EMPTY');
-        $this->assertNotNull($geom);
-        $geom = $reader->read('GEOMETRYCOLLECTION(
-                MULTIPOLYGON(
-                 ((0 0, 1 0, 1 1, 0 1, 0 0)),
-                 ((10 10, 10 14, 14 14, 14 10, 10 10),
-                  (11 11, 11 12, 12 12, 12 11, 11 11))
-                ),
-                POLYGON((0 0, 1 0, 1 1, 0 1, 0 0)),
-                MULTILINESTRING((0 0, 2 3), (10 10, 3 4)),
-                LINESTRING(0 0, 2 3),
-                MULTIPOINT(0 0, 2 3),
-                POINT(9 0)
-        )');
-        $this->assertNotNull($geom);
-        $geom = $reader->read('GEOMETRYCOLLECTION EMPTY');
-        $this->assertNotNull($geom);
-
-        /* BOGUS WKT */
-        try {
-            $reader->read("MULTIDOT(0 1 2 3)");
-            $this->assertTrue(FALSE); # this is just to fail if we get here
-        } catch (Exception $e) {
-            $this->assertContains('ParseException', $e->getMessage());
-        }
-
-        /* BOGUS call (#448) */
-        try {
-            $reader->read();
-            $this->assertTrue(FALSE); # this is just to fail if we get here
-        } catch (Exception $e) {
-            $this->assertContains('expects exactly 1 parameter',
-                                  $e->getMessage());
-        }
-    }
-
-    public function testWKTWriter__construct()
-    {
-        $writer = new GEOSWKTWriter();
-        $this->assertNotNull($writer);
-    }
-
-    public function testWKTWriter_write()
-    {
-        $writer = new GEOSWKTWriter();
-        $reader = new GEOSWKTReader();
-
-        try {
-            $writer->write(1);
-            $this->assertTrue(FALSE); # this is just to fail if we get here
-        } catch (Exception $e) {
-            $this->assertContains('expects parameter 1', $e->getMessage());
-        }
-
-        $g = $reader->read('POINT(6 7)');
-
-        $this->assertEquals('POINT (6.0000000000000000 7.0000000000000000)',
-            $writer->write($g));
-    }
-
-    public function testWKTWriter_setTrim()
-    {
-        if (!method_exists(GEOSWKTWriter::class, 'setTrim')) {
-            return $this->markTestSkipped("GEOSWKTWriter::setTrim is not defined");
-        }
-
-        $writer = new GEOSWKTWriter();
-        $reader = new GEOSWKTReader();
-
-        $g = $reader->read('POINT(6 7)');
-        $this->assertNotNull($g);
-
-        $writer->setTrim(TRUE);
-        $this->assertEquals('POINT (6 7)',
-            $writer->write($g));
-
-        $writer->setTrim(FALSE);
-        $this->assertEquals('POINT (6.0000000000000000 7.0000000000000000)',
-            $writer->write($g));
-
-    }
-
-    public function testWKT_roundTrip()
-    {
-        $r = new GEOSWKTReader();
-        $w = new GEOSWKTWriter();
-
-        if (method_exists(GEOSWKTWriter::class, 'setTrim')) {
-            $w->setTrim(TRUE);
-        }
-
-        $in[] = 'POINT (0 0)';
-        $in[] = 'POINT EMPTY';
-        $in[] = 'MULTIPOINT (0 1, 2 3)';
-        $in[] = 'MULTIPOINT EMPTY';
-        $in[] = 'LINESTRING (0 0, 2 3)';
-        $in[] = 'LINESTRING EMPTY';
-        $in[] = 'MULTILINESTRING ((0 1, 2 3), (10 10, 3 4))';
-        $in[] = 'MULTILINESTRING EMPTY';
-        $in[] = 'POLYGON ((0 0, 1 0, 1 1, 0 1, 0 0))';
-        $in[] = 'POLYGON EMPTY';
-        $in[] = 'MULTIPOLYGON (((0 0, 1 0, 1 1, 0 1, 0 0)), ((10 10, 10 14, 14 14, 14 10, 10 10), (11 11, 11 12, 12 12, 12 11, 11 11)))';
-        $in[] = 'MULTIPOLYGON EMPTY';
-        $in[] = 'GEOMETRYCOLLECTION (MULTIPOLYGON (((0 0, 1 0, 1 1, 0 1, 0 0)), ((10 10, 10 14, 14 14, 14 10, 10 10), (11 11, 11 12, 12 12, 12 11, 11 11))), POLYGON ((0 0, 1 0, 1 1, 0 1, 0 0)), MULTILINESTRING ((0 0, 2 3), (10 10, 3 4)), LINESTRING (0 0, 2 3), MULTIPOINT (0 0, 2 3), POINT (9 0))';
-        $in[] = 'GEOMETRYCOLLECTION EMPTY';
-
-        foreach ($in as $i) {
-            $this->assertEquals($i, $w->write($r->read($i)));
-        }
-
-    }
-
-    public function testWKTWriter_setRoundingPrecision()
-    {
-        if (!method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
-            return $this->markTestSkipped("GEOSWKTWriter::setRoundingPrecision is not defined");
-        }
-
-        $writer = new GEOSWKTWriter();
-        $reader = new GEOSWKTReader();
-
-        $g = $reader->read('POINT(6.123456 7.123456)');
-
-        $this->assertEquals('POINT (6.1234560000000000 7.1234560000000000)',
-            $writer->write($g));
-
-        $writer->setRoundingPrecision(2);
-        $this->assertEquals('POINT (6.12 7.12)', $writer->write($g));
-
-        $writer->setRoundingPrecision(5); /* rounds */
-        $this->assertEquals('POINT (6.12346 7.12346)', $writer->write($g));
-
-        $writer->setRoundingPrecision(1);
-        $this->assertEquals('POINT (6.1 7.1)', $writer->write($g));
-
-        $writer->setRoundingPrecision(0);
-        $this->assertEquals('POINT (6 7)', $writer->write($g));
-
-    }
-
-    public function testWKTWriter_getOutputDimension()
-    {
-        if (!method_exists(GEOSWKTWriter::class, 'getOutputDimension')) {
-            return $this->markTestSkipped("GEOSWKTWriter::getOutputDimension is not defined");
-        }
-
-        $writer = new GEOSWKTWriter();
-        $this->assertEquals(2, $writer->getOutputDimension());
-    }
-
-    public function testWKTWriter_setOutputDimension()
-    {
-        if (!method_exists(GEOSWKTWriter::class, 'setOutputDimension')) {
-            return $this->markTestSkipped("GEOSWKTWriter::setOutputDimension is not defined");
-        }
-
-        $reader = new GEOSWKTReader();
-        $g3d = $reader->read('POINT(1 2 3)');
-        $g2d = $reader->read('POINT(3 2)');
-
-        $writer = new GEOSWKTWriter();
-        $writer->setTrim(TRUE);
-
-        # Only 2d by default
-        $this->assertEquals('POINT (1 2)', $writer->write($g3d));
-
-        # 3d if requested _and_ available
-        $writer->setOutputDimension(3);
-        $this->assertEquals('POINT Z (1 2 3)', $writer->write($g3d));
-        $this->assertEquals('POINT (3 2)', $writer->write($g2d));
-
-        # 1 is invalid
-        try {
-            $writer->setOutputDimension(1);
-            $this->assertTrue(FALSE);
-        } catch (Exception $e) {
-            $this->assertContains('must be 2 or 3', $e->getMessage());
-        }
-
-        # 4 is invalid
-        try {
-            $writer->setOutputDimension(4);
-            $this->assertTrue(FALSE);
-        } catch (Exception $e) {
-            $this->assertContains('must be 2 or 3', $e->getMessage());
-        }
-
-    }
-
-    public function testWKTWriter_setOld3D()
-    {
-        if (!method_exists(GEOSWKTWriter::class, 'setOld3D')) {
-            return $this->markTestSkipped("GEOSWKTWriter::setOld3D is not defined");
-        }
-
-        $reader = new GEOSWKTReader();
-        $g3d = $reader->read('POINT(1 2 3)');
-
-        $writer = new GEOSWKTWriter();
-        $writer->setTrim(TRUE);
-
-        # New 3d WKT by default
-        $writer->setOutputDimension(3);
-        $this->assertEquals('POINT Z (1 2 3)', $writer->write($g3d));
-
-        # Switch to old
-        $writer->setOld3D(TRUE);
-        $this->assertEquals('POINT (1 2 3)', $writer->write($g3d));
-
-        # Old3d flag is not reset when changing dimensions
-        $writer->setOutputDimension(2);
-        $this->assertEquals('POINT (1 2)', $writer->write($g3d));
-        $writer->setOutputDimension(3);
-        $this->assertEquals('POINT (1 2 3)', $writer->write($g3d));
-
-        # Likewise, dimensions spec is not reset when changing old3d flag
-        $writer->setOld3D(FALSE);
-        $this->assertEquals('POINT Z (1 2 3)', $writer->write($g3d));
-
-    }
-
     public function testGeometry_serialization()
     {
         $reader = new GEOSWKTReader();
@@ -493,7 +130,7 @@ class test extends PHPUnit_Framework_TestCase
 
     }
 
-    public function xtestGeometry_buffer()
+    public function testGeometry_buffer()
     {
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
@@ -644,7 +281,7 @@ class test extends PHPUnit_Framework_TestCase
         ));
         $this->assertEquals('LINESTRING (110 100, 110 0, 100 -10, 0 -10)', $writer->write($b));
 
-	      /* left, mitre join */
+          /* left, mitre join */
         $b = $g->offsetCurve(10, array(
             'quad_segs' => 2,
             'join' => GEOSBUF_JOIN_MITRE
@@ -1166,7 +803,7 @@ class test extends PHPUnit_Framework_TestCase
 
     }
 
-    public function xtestGeometry_polygonize()
+    public function testGeometry_polygonize()
     {
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
@@ -1233,7 +870,7 @@ class test extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(0, count($ret['invalid_rings']));
 
-	// TODO: test a polygonize run with cut lines and invalid_rings
+    // TODO: test a polygonize run with cut lines and invalid_rings
 
     }
 
@@ -1325,7 +962,7 @@ class test extends PHPUnit_Framework_TestCase
         POINT (9 0),
         POINT(1 0)),
         LINESTRING EMPTY
-');
+    ');
 
         $gs = $g->extractUniquePoints();
         if ( ! $gs ) RETURN_NULL(); /* should get an exception before */
@@ -2238,212 +1875,9 @@ class test extends PHPUnit_Framework_TestCase
         $this->assertEquals('MULTILINESTRING ((0 0, 5 0), (5 0, 10 0, 5 -5, 5 0), (5 0, 5 5))', $writer->write($noded));
 
     }
-
-    public function testWKBWriter__construct()
-    {
-        $writer = new GEOSWKBWriter();
-        $this->assertNotNull($writer);
-    }
-
-    public function testWKBWriter_getOutputDimension()
-    {
-        $writer = new GEOSWKBWriter();
-        $this->assertEquals(2, $writer->getOutputDimension());
-    }
-
-    public function testWKBWriter_setOutputDimension()
-    {
-        $writer = new GEOSWKBWriter();
-        $writer->setOutputDimension(3);
-        $this->assertEquals(3, $writer->getOutputDimension());
-        $writer->setOutputDimension(2);
-        $this->assertEquals(2, $writer->getOutputDimension());
-
-        # 1 is invalid
-        try {
-            $writer->setOutputDimension(1);
-            $this->assertTrue(FALSE);
-        } catch (Exception $e) {
-            $this->assertContains('must be 2 or 3', $e->getMessage());
-        }
-
-        # 4 is invalid
-        try {
-            $writer->setOutputDimension(4);
-            $this->assertTrue(FALSE);
-        } catch (Exception $e) {
-            $this->assertContains('must be 2 or 3', $e->getMessage());
-        }
-    }
-
-    public function testWKBWriter_getsetByteOrder()
-    {
-        $writer = new GEOSWKBWriter();
-
-        /* Machine-dependent */
-        $bo = $writer->getByteOrder();
-
-        $obo = $bo ? 0 : 1;
-        $writer->setByteOrder($obo);
-        $this->assertEquals($obo, $writer->getByteOrder());
-
-        # Anything different from 0 (BIG_ENDIAN) or 1 (LITTLE_ENDIAN)
-        # is invalid
-        try {
-            $writer->setByteOrder(5);
-            $this->assertTrue(FALSE);
-        } catch (Exception $e) {
-            $this->assertContains('LITTLE (1) or BIG (0)', $e->getMessage());
-        }
-    }
-
-    public function testWKBWriter_getsetIncludeSRID()
-    {
-        $writer = new GEOSWKBWriter();
-
-        $this->assertEquals(FALSE, $writer->getIncludeSRID());
-        $writer->setIncludeSRID(TRUE);
-        $this->assertEquals(TRUE, $writer->getIncludeSRID());
-        $writer->setIncludeSRID(FALSE);
-        $this->assertEquals(FALSE, $writer->getIncludeSRID());
-    }
-
-    /**
-     * @dataProvider providerWKBWriter_write
-     *
-     * @param integer $byteOrder       The byte order: 0 for BIG endian, 1 for LITTLE endian.
-     * @param integer $inputDimension  The input dimension: 2 or 3.
-     * @param integer $outputDimension The output dimension: 2 or 3.
-     * @param boolean $includeSrid     Whether to include the SRID in the output.
-     * @param string  $wkb             The expected HEX WKB output.
-     */
-    public function testWKBWriter_write($byteOrder, $inputDimension, $outputDimension, $includeSrid, $wkb)
-    {
-        $reader = new GEOSWKTReader();
-        $writer = new GEOSWKBWriter();
-
-        $writer->setByteOrder($byteOrder);
-        $writer->setOutputDimension($outputDimension);
-        $writer->setIncludeSRID($includeSrid);
-
-        if ($inputDimension === 3) {
-            $g = $reader->read('POINT(6 7 8)');
-            $g->setSRID(53);
-        } else {
-            $g = $reader->read('POINT(6 7)');
-            $g->setSRID(43);
-        }
-
-        $this->assertSame(hex2bin($wkb), $writer->write($g));
-        $this->assertSame($wkb, $writer->writeHEX($g));
-    }
-
-    public function providerWKBWriter_write()
-    {
-        return array(
-            // 2D input
-            array(1, 2, 2, false, '010100000000000000000018400000000000001C40'),        // 2D LITTLE endian
-            array(1, 2, 2, true, '01010000202B00000000000000000018400000000000001C40'), // 2D LITTLE endian + SRID
-            array(0, 2, 2, false, '00000000014018000000000000401C000000000000'),        // 2D BIG endian
-            array(0, 2, 2, true, '00200000010000002B4018000000000000401C000000000000'), // 2D BIG endian + SRID
-            array(1, 2, 3, false, '010100000000000000000018400000000000001C40'),        // 3D LITTLE endian
-            array(1, 2, 3, true, '01010000202B00000000000000000018400000000000001C40'), // 3D LITTLE endian + SRID
-            array(0, 2, 3, false, '00000000014018000000000000401C000000000000'),        // 3D BIG endian
-            array(0, 2, 3, true, '00200000010000002B4018000000000000401C000000000000'), // 3D BIG endian + SRID
-
-            // 3D input
-            array(1, 3, 2, false, '010100000000000000000018400000000000001C40'),                        // 2D LITTLE endian
-            array(1, 3, 2, true, '01010000203500000000000000000018400000000000001C40'),                 // 2D LITTLE endian + SRID
-            array(0, 3, 2, false, '00000000014018000000000000401C000000000000'),                        // 2D BIG endian
-            array(0, 3, 2, true, '0020000001000000354018000000000000401C000000000000'),                 // 2D BIG endian + SRID
-            array(1, 3, 3, false, '010100008000000000000018400000000000001C400000000000002040'),        // 3D LITTLE endian
-            array(1, 3, 3, true, '01010000A03500000000000000000018400000000000001C400000000000002040'), // 3D LITTLE endian + SRID
-            array(0, 3, 3, false, '00800000014018000000000000401C0000000000004020000000000000'),        // 3D BIG endian
-            array(0, 3, 3, true, '00A0000001000000354018000000000000401C0000000000004020000000000000'), // 3D BIG endian + SRID
-        );
-    }
-
-    /**
-     * @expectedException PHPUnit_Framework_Error_Warning
-     * @expectedExceptionMessage expects parameter 1
-     */
-    public function testInvalidWriteThrowsException()
-    {
-        $writer = new GEOSWKBWriter();
-        $writer->write(1);
-    }
-
-    /**
-     * @expectedException PHPUnit_Framework_Error_Warning
-     * @expectedExceptionMessage expects parameter 1
-     */
-    public function testInvalidWriteHEXThrowsException()
-    {
-        $writer = new GEOSWKBWriter();
-        $writer->writeHEX(1);
-    }
-
-    public function testWKBReader__construct()
-    {
-        $reader = new GEOSWKBReader();
-        $this->assertNotNull($reader);
-    }
-
-    /**
-     * @dataProvider providerWKBReader_read
-     *
-     * @param string  $wkb  The WKB to read.
-     * @param boolean $is3D Whether the geometry is 3D (true) or 2D (false).
-     * @param integer $srid The expected result SRID.
-     */
-    public function testWKBReader_read($wkb, $is3D, $srid)
-    {
-        $reader = new GEOSWKBReader();
-
-        $writer = new GEOSWKTWriter();
-
-        if (method_exists(GEOSWKTWriter::class, 'setTrim')) {
-            $writer->setTrim(TRUE);
-        }
-
-        if (method_exists(GEOSWKTWriter::class, 'setOutputDimension')) {
-            $writer->setOutputDimension(3);
-        }
-
-        $wkt = $is3D ? 'POINT Z (6 7 8)' : 'POINT (6 7)';
-
-        $g = $reader->read(hex2bin($wkb));
-        $this->assertSame($wkt, $writer->write($g));
-        $this->assertSame($srid, $g->getSRID());
-
-        $g = $reader->readHEX($wkb);
-        $this->assertSame($wkt, $writer->write($g));
-        $this->assertSame($srid, $g->getSRID());
-    }
-
-    public function providerWKBReader_read()
-    {
-        return array(
-            array('010100000000000000000018400000000000001C40',                         false,  0), // 2D LITTLE endian,
-            array('00000000014018000000000000401C000000000000',                         false,  0), // 2D BIG endian,
-            array('01010000202B00000000000000000018400000000000001C40',                 false, 43), // 2D LITTLE endian + SRID
-            array('00200000010000002B4018000000000000401C000000000000',                 false, 43), // 2D BIG endian + SRID,
-            array('010100008000000000000018400000000000001C400000000000002040',         true,   0), // 3D LITTLE endian
-            array('01010000A03500000000000000000018400000000000001C400000000000002040', true,  53), // 3D LITTLE endian + SRID
-            array('00800000014018000000000000401C0000000000004020000000000000',         true,   0), // 3D BIG endian
-            array('00A0000001000000354018000000000000401C0000000000004020000000000000', true,  53), // 3D BIG endian + SRID
-        );
-    }
-
-    public function testGEOSRelateMatch()
-    {
-        if (!function_exists('GEOSRelateMatch')) {
-            return $this->markTestSkipped("GEOSRelateMatch is not defined");
-        }
-
-        $this->assertTrue(GEOSRelateMatch('0FFFFFFF2', '0FFFFFFF2'));
-        $this->assertTrue(GEOSRelateMatch('0FFFFFFF2', '0FFFFFFF*'));
-        $this->assertTrue(GEOSRelateMatch('0FFFFFFF2', 'TFFFFFFF2'));
-        $this->assertFalse(GEOSRelateMatch('0FFFFFFF2', '0FFFFFFFF'));
-    }
 }
+
+GeometryTest::run();
+
+?>
+--EXPECT--
