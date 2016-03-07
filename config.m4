@@ -93,6 +93,7 @@ if test "$PHP_GEOS" != "no"; then
   CFLAGS=$old_CFLAGS
 
   PHP_ADD_LIBRARY(geos_c, 1, GEOS_SHARED_LIBADD)
+  PHP_ADD_MAKEFILE_FRAGMENT(Makefile.frag)
   PHP_SUBST(GEOS_SHARED_LIBADD)
   PHP_ADD_INCLUDE($GEOS_INCLUDE, 1)
   PHP_NEW_EXTENSION(geos, geos.c, $ext_shared,,)
