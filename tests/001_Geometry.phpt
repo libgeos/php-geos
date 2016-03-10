@@ -241,7 +241,7 @@ class GeometryTest extends GEOSTest
     public function testGeometry_offsetCurve()
     {
         if (!method_exists(GEOSGeometry::class, 'offsetCurve')) {
-            return $this->markTestSkipped("GEOSGeometry::offsetCurve is not defined");
+            return;
         }
 
         $reader = new GEOSWKTReader();
@@ -383,7 +383,7 @@ class GeometryTest extends GEOSTest
     public function testGeometry_clipByRect()
     {
         if (!method_exists(GEOSGeometry::class, 'clipByRect')) {
-            return $this->markTestSkipped("GEOSGeometry::clipByRect is not defined");
+            return;
         }
 
         $reader = new GEOSWKTReader();
@@ -782,7 +782,7 @@ class GeometryTest extends GEOSTest
     public function testGeometry_relateBoundaryNodeRule()
     {
         if (!method_exists(GEOSGeometry::class, 'relateBoundaryNodeRule')) {
-            return $this->markTestSkipped("GEOSGeometry::relateBoundaryNodeRule is not defined");
+            return;
         }
 
         $reader = new GEOSWKTReader();
@@ -902,7 +902,7 @@ class GeometryTest extends GEOSTest
     public function testGeometry_sharedPaths()
     {
         if (!function_exists('GEOSSharedPaths')) {
-            return $this->markTestSkipped("GEOSSSharedPaths is not defined");
+            return;
         }
 
         $reader = new GEOSWKTReader();
@@ -938,7 +938,7 @@ class GeometryTest extends GEOSTest
     public function testGeometry_extractUniquePoints()
     {
         if (!method_exists(GEOSGeometry::class, 'extractUniquePoints')) {
-            return $this->markTestSkipped("GEOSGeometry::extractUniquePoints is not defined");
+            return;
         }
 
         $reader = new GEOSWKTReader();
@@ -1207,7 +1207,7 @@ class GeometryTest extends GEOSTest
     public function testGeometry_checkValidity()
     {
         if (!method_exists(GEOSGeometry::class, 'checkValidity')) {
-            return $this->markTestSkipped("GEOSGeometry::checkValidity is not defined");
+            return;
         }
 
         $reader = new GEOSWKTReader();
@@ -1296,7 +1296,7 @@ class GeometryTest extends GEOSTest
     public function testGeometry_isClosed()
     {
         if (!method_exists(GEOSGeometry::class, 'isClosed')) {
-            return $this->markTestSkipped("GEOSGeometry::isClosed is not defined");
+            return;
         }
 
         $reader = new GEOSWKTReader();
@@ -1446,7 +1446,7 @@ class GeometryTest extends GEOSTest
     public function testGeometry_numPoints()
     {
         if (!method_exists(GEOSGeometry::class, 'numPoints')) {
-            return $this->markTestSkipped("GEOSGeometry::numPoints is not defined");
+            return;
         }
 
         $reader = new GEOSWKTReader();
@@ -1467,11 +1467,11 @@ class GeometryTest extends GEOSTest
     public function testGeometry_getXY()
     {
         if (!method_exists(GEOSGeometry::class, 'getX')) {
-            return $this->markTestSkipped("GEOSGeometry::getX is not defined");
+            return;
         }
 
         if (!method_exists(GEOSGeometry::class, 'getY')) {
-            return $this->markTestSkipped("GEOSGeometry::getY is not defined");
+            return;
         }
 
         $reader = new GEOSWKTReader();
@@ -1644,7 +1644,7 @@ class GeometryTest extends GEOSTest
     public function testGeometry_coordinateDimension()
     {
         if (!method_exists(GEOSGeometry::class, 'coordinateDimension')) {
-            return $this->markTestSkipped("GEOSGeometry::coordinateDimension is not defined");
+            return;
         }
 
         $reader = new GEOSWKTReader();
@@ -1660,7 +1660,7 @@ class GeometryTest extends GEOSTest
     public function testGeometry_pointN()
     {
         if (!method_exists(GEOSGeometry::class, 'pointN')) {
-            return $this->markTestSkipped("GEOSGeometry::pointN is not defined");
+            return;
         }
 
         $reader = new GEOSWKTReader();
@@ -1693,11 +1693,11 @@ class GeometryTest extends GEOSTest
     public function testGeometry_startendPoint()
     {
         if (!method_exists(GEOSGeometry::class, 'startPoint')) {
-            return $this->markTestSkipped("GEOSGeometry::startPoint is not defined");
+            return;
         }
 
         if (!method_exists(GEOSGeometry::class, 'endPoint')) {
-            return $this->markTestSkipped("GEOSGeometry::endPoint is not defined");
+            return;
         }
 
         $reader = new GEOSWKTReader();
@@ -1798,7 +1798,7 @@ class GeometryTest extends GEOSTest
     public function testGeometry_delaunayTriangulation()
     {
         if (!method_exists(GEOSGeometry::class, 'delaunayTriangulation')) {
-            return $this->markTestSkipped("GEOSGeometry::delaunayTriangulation is not defined");
+            return;
         }
 
         $reader = new GEOSWKTReader();
@@ -1818,7 +1818,7 @@ class GeometryTest extends GEOSTest
     public function testGeometry_voronoiDiagram()
     {
         if (!method_exists(GEOSGeometry::class, 'voronoiDiagram')) {
-            return $this->markTestSkipped("GEOSGeometry::voronoiDiagram is not defined");
+            return;
         }
 
         $reader = new GEOSWKTReader();
@@ -1841,7 +1841,7 @@ class GeometryTest extends GEOSTest
     public function testGeometry_snapTo()
     {
         if (!method_exists(GEOSGeometry::class, 'snapTo')) {
-            return $this->markTestSkipped("GEOSGeometry::snapTo is not defined");
+            return;
         }
 
         $reader = new GEOSWKTReader();
@@ -1862,7 +1862,7 @@ class GeometryTest extends GEOSTest
     public function testGeometry_node()
     {
         if (!method_exists(GEOSGeometry::class, 'node')) {
-            return $this->markTestSkipped("GEOSGeometry::node is not defined");
+            return;
         }
 
         $reader = new GEOSWKTReader();
