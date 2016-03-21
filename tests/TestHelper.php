@@ -68,9 +68,13 @@ class GEOSTest
 
         foreach (get_class_methods($instance) as $method) {
             if (strpos($method, 'test') === 0) {
+                $class = get_class($instance);
+
                 try {
                     $instance->$method();
+                    print "{$class}->{$method}\tOK" . PHP_EOL;
                 } catch (Exception $e) {
+                    print "{$class}->{$method}\tERROR:" . PHP_EOL;
                     print $e->getMessage() . "\n";
                     debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
                     throw $e;
