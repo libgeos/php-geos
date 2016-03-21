@@ -47,3 +47,5 @@ GeneralTest::run();
 
 ?>
 --EXPECT--
+GeneralTest->testGEOSVersion	OK
+GeneralTest->testConstants	OK

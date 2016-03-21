@@ -107,3 +107,7 @@ WKTReaderTest::run();
 
 ?>
 --EXPECT--
+WKTReaderTest->testWKTReader__construct	OK
+WKTReaderTest->testWKTReader_read	OK
+WKTReaderTest->testBogusWKT	OK
+WKTReaderTest->testNoArgumentsToRead	OK

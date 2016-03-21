@@ -3252,5 +3252,7 @@ PHP_MINFO_FUNCTION(geos)
         "GEOS - Geometry Engine Open Source", "enabled");
     php_info_print_table_row(2,
         "Version", PHP_GEOS_VERSION);
+    php_info_print_table_row(2,
+        "GEOS Version", GEOSversion());
     php_info_print_table_end();
 }

@@ -160,3 +160,11 @@ WKBWriterTest::run();
 
 ?>
 --EXPECT--
+WKBWriterTest->testWKBWriter__construct	OK
+WKBWriterTest->testWKBWriter_getOutputDimension	OK
+WKBWriterTest->testWKBWriter_setOutputDimension	OK
+WKBWriterTest->testWKBWriter_getsetByteOrder	OK
+WKBWriterTest->testWKBWriter_getsetIncludeSRID	OK
+WKBWriterTest->testWKBWriter_write	OK
+WKBWriterTest->testInvalidWriteThrowsException	OK
+WKBWriterTest->testInvalidWriteHEXThrowsException	OK

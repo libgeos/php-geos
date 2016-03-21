@@ -199,3 +199,11 @@ WKTWriterTest::run();
 
 ?>
 --EXPECT--
+WKTWriterTest->testWKTWriter__construct	OK
+WKTWriterTest->testWKTWriter_write	OK
+WKTWriterTest->testWKTWriter_setTrim	OK
+WKTWriterTest->testWKT_roundTrip	OK
+WKTWriterTest->testWKTWriter_setRoundingPrecision	OK
+WKTWriterTest->testWKTWriter_getOutputDimension	OK
+WKTWriterTest->testWKTWriter_setOutputDimension	OK
+WKTWriterTest->testWKTWriter_setOld3D	OK
