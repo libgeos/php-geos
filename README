@@ -2,7 +2,7 @@ PHP module for GEOS
 ===================
 
   Date: Fri Jun 18 15:52:57 CEST 2010
-  Author: Sandro Santilli <strk@keybit.net>
+  Author: Sandro Santilli <strk@kbt.io>
 
 The code in this directory provides a PHP module to
 make use of functionalities of the GEOS library.

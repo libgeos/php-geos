@@ -4,7 +4,7 @@ This PHP extension is covered under the following licenses:
 - geos.c and php_geos.h have been extracted from the GEOS library
   and are covered under the LGPL 2.1 are are copyright
 
-    Sandro Santilli <strk@keybit.net>
+    Sandro Santilli <strk@kbt.io>
 
   See the LGPL-2 file for details.
 

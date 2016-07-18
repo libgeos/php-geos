@@ -3,7 +3,7 @@
  *    GEOS - Geometry Engine Open Source
  *    http://trac.osgeo.org/geos
  *
- *    Copyright (C) 2010 Sandro Santilli <strk@keybit.net>
+ *    Copyright (C) 2010 Sandro Santilli <strk@kbt.io>
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
