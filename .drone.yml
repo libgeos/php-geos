@@ -1,0 +1,9 @@
+# See http://readme.drone.io/usage/overview
+pipeline:
+  build:
+    image: docker.kbt.io/php-geos/build-test:alpine
+    commands:
+      - ./autogen.sh
+      - ./configure
+      - make
+      - make check
