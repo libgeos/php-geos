@@ -1,8 +1,8 @@
 PHP module for GEOS
 ===================
 
-  Date: Fri Jun 18 15:52:57 CEST 2010
-  Author: Sandro Santilli <strk@kbt.io>
+[![status](https://drone.osgeo.kbt.io/api/badges/geos/php-geos/status.svg?branch=svn-trunk)]
+(https://drone.osgeo.kbt.io/geos/php-geos?branch=svn-trunk, alt=status)
 
 The code in this directory provides a PHP module to make use
 of functionalities of the [GEOS library] (http://geos.osgeo.org).
