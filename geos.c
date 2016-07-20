@@ -57,6 +57,11 @@ PHP_FUNCTION(GEOSRelateMatch);
 #define zend_function_entry function_entry
 #endif
 
+#if PHP_VERSION_ID > 70000
+# define zend_object_value zend_object *
+#endif
+
+
 static zend_function_entry geos_functions[] = {
     PHP_FE(GEOSVersion, NULL)
     PHP_FE(GEOSPolygonize, NULL)
@@ -130,14 +135,22 @@ typedef struct Proxy_t {
 static void
 setRelay(zval* val, void* obj) {
     TSRMLS_FETCH();
+#ifdef Z_OBJ
+    Proxy* proxy = (Proxy*)Z_OBJ(*val TSRMLS_CC);
+#else
     Proxy* proxy = (Proxy*)zend_object_store_get_object(val TSRMLS_CC);
+#endif
     proxy->relay = obj;
 }
 
 static inline void *
 getRelay(zval* val, zend_class_entry* ce) {
     TSRMLS_FETCH();
-    Proxy *proxy =  (Proxy*)zend_object_store_get_object(val TSRMLS_CC);
+#ifdef Z_OBJ
+    Proxy* proxy = (Proxy*)Z_OBJ(*val TSRMLS_CC);
+#else
+    Proxy* proxy = (Proxy*)zend_object_store_get_object(val TSRMLS_CC);
+#endif
     if ( proxy->std.ce != ce ) {
         php_error_docref(NULL TSRMLS_CC, E_ERROR,
             "Relay object is not an %s", ce->name);
@@ -177,7 +190,8 @@ static long getZvalAsDouble(zval* val)
 
 static zend_object_value
 Gen_create_obj (zend_class_entry *type,
-    zend_objects_free_object_storage_t st, zend_object_handlers* handlers)
+    void (*dtor)(void *object TSRMLS_DC),
+    zend_object_handlers* handlers)
 {
     TSRMLS_FETCH();
     zend_object_value retval;
@@ -195,7 +209,7 @@ Gen_create_obj (zend_class_entry *type,
     object_properties_init(&(obj->std), type);
 #endif
 
-    retval.handle = zend_objects_store_put(obj, NULL, st, NULL TSRMLS_CC);
+    retval.handle = zend_objects_store_put(obj, NULL, dtor, NULL TSRMLS_CC);
     retval.handlers = handlers;
 
     return retval;
