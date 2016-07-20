@@ -4,24 +4,22 @@ PHP module for GEOS
   Date: Fri Jun 18 15:52:57 CEST 2010
   Author: Sandro Santilli <strk@kbt.io>
 
-The code in this directory provides a PHP module to
-make use of functionalities of the GEOS library.
+The code in this directory provides a PHP module to make use
+of functionalities of the [GEOS library] (http://geos.osgeo.org).
+
 The bindings are linked to the C-API, for betters stability.
 
-REQUIREMENTS
-------------
+# Requirements
 
 You need php5 development tools, often found in
 packages named something like 'php5-dev'. 
 
-BUILD
------
+# Building
 
 Just add --enable-php to your GEOS configure line
 and run 'make'.
 
-TESTING
--------
+# Testing
 
 Automated testing should be executed on 'make check'
 togheter with the rest of the GEOS testsuite.
@@ -33,15 +31,13 @@ To install:
 
   sudo pear install --force --alldeps phpunit/phpunit
 
-INSTALL
--------
+# Installing
 
 As root (or owner with write access to the directory
 returned by php-config --extension-dir),
 run 'make install'
 
-USAGE
------
+# Using
 
  ... TODO ...
  (reference some automatically built doc?)
