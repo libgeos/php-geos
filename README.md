@@ -1,23 +1,26 @@
 PHP module for GEOS
 ===================
 
-[![status](https://drone.osgeo.kbt.io/api/badges/geos/php-geos/status.svg?branch=svn-trunk)]
-(https://drone.osgeo.kbt.io/geos/php-geos?branch=svn-trunk, alt=status)
+[![build status]
+(https://drone.osgeo.kbt.io/api/badges/geos/php-geos/status.svg?branch=master)]
+(https://drone.osgeo.kbt.io/geos/php-geos?branch=master, alt=build status)
 
 The code in this directory provides a PHP module to make use
 of functionalities of the [GEOS library] (http://geos.osgeo.org).
 
 The bindings are linked to the C-API, for betters stability.
 
-# Requirements
-
-You need php5 development tools, often found in
-packages named something like 'php5-dev'. 
-
 # Building
 
-Just add --enable-php to your GEOS configure line
-and run 'make'.
+## Requirements
+
+You need:
+
+  - PHP development files
+    often found in packages named something like 'php5-dev'
+
+  - GEOS development files
+    often found in packages named something like 'libgeos-dev'
 
 # Testing
 
