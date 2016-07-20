@@ -1,7 +1,7 @@
 # See http://readme.drone.io/usage/overview
 pipeline:
   build:
-    image: docker.kbt.io/php-geos/build-test:alpine
+    image: docker.kbt.io/php-geos/build-test:trisquel
     commands:
       - ./autogen.sh
       - ./configure

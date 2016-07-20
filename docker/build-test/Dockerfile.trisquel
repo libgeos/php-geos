@@ -1,0 +1,27 @@
+FROM index.docker.io/alpine:latest
+RUN apk add --update make                  && rm -rf /var/cache/apk/*
+RUN apk add --update gcc                   && rm -rf /var/cache/apk/*
+# Splitting install of php5-dev in steps to reduce memory requirements
+RUN apk add --update ncurses-terminfo-base && rm -rf /var/cache/apk/*
+RUN apk add --update ncurses-terminfo      && rm -rf /var/cache/apk/*
+RUN apk add --update pcre                  && rm -rf /var/cache/apk/*
+RUN apk add --update php5-common           && rm -rf /var/cache/apk/*
+RUN apk add --update readline              && rm -rf /var/cache/apk/*
+RUN apk add --update libxml2               && rm -rf /var/cache/apk/*
+RUN apk add --update libpcre16             && rm -rf /var/cache/apk/*
+RUN apk add --update libpcre32             && rm -rf /var/cache/apk/*
+RUN apk add --update pcre-dev              && rm -rf /var/cache/apk/*
+RUN apk add --update php5-cli              && rm -rf /var/cache/apk/*
+RUN apk add --update php5-dev              && rm -rf /var/cache/apk/*
+
+# Autoconf brings in perl
+RUN apk add --update autoconf              && rm -rf /var/cache/apk/*
+
+#RUN apk add --update autoconf && rm -rf /var/cache/apk/*
+#RUN apk add --update git
+
+FROM kpengboy/trisquel
+RUN apt-get update -qq && apt-get install -y build-essential
+RUN apt-get update -qq && apt-get install -y autoconf
+RUN apt-get update -qq && apt-get install -y php5-dev
+RUN apt-get update -qq && apt-get install -y libgeos-dev
