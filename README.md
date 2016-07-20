@@ -17,28 +17,25 @@ The bindings are linked to the C-API, for betters stability.
 You need:
 
   - PHP development files
-    often found in packages named something like 'php5-dev'
+    ( often found in packages named something like 'php5-dev' )
 
   - GEOS development files
-    often found in packages named something like 'libgeos-dev'
+    ( often found in packages named something like 'libgeos-dev' )
 
 # Testing
 
-Automated testing should be executed on 'make check'
-togheter with the rest of the GEOS testsuite.
-You can still run 'make check' from this dir for
-localized (php-only) testing.
+Automated testing is executed on 'make check'.
 
-Note that you'll need phpunit installed for this to work.
-To install:
+You'll need phpunit installed for this to work. To install:
 
-  sudo pear install --force --alldeps phpunit/phpunit
+    pear install --force --alldeps phpunit/phpunit
 
 # Installing
 
 As root (or owner with write access to the directory
-returned by php-config --extension-dir),
-run 'make install'
+returned by php-config --extension-dir), run:
+
+    make install
 
 # Using
 
