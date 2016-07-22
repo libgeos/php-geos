@@ -2386,27 +2386,25 @@ PHP_METHOD(WKTReader, read)
 {
     GEOSWKTReader *reader;
     GEOSGeometry *geom;
-    char* wkt;
+    zend_string *wkt;
+#if PHP_VERSION_ID < 70000
     int wktlen;
+#endif
 
     reader = (GEOSWKTReader*)getRelay(getThis(), WKTReader_ce_ptr);
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
-        &wkt, &wktlen) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
+#if PHP_VERSION_ID >= 70000
+            "S", &wkt
+#else
+            "s", &wkt, &wktlen
+#endif
+       ) == FAILURE)
     {
         RETURN_NULL();
     }
 
-    if ( ! wktlen ) {
-        noticeHandler("Zero length string passwd to WKTReader::read");
-        RETURN_NULL();
-    }
-    if ( ! wkt ) {
-        noticeHandler("Null string passwd to WKTReader::read");
-        RETURN_NULL();
-    }
-
-    geom = GEOSWKTReader_read_r(GEOS_G(handle), reader, wkt);
+    geom = GEOSWKTReader_read_r(GEOS_G(handle), reader, ZSTR_VAL(wkt));
     /* we'll probably get an exception if geom is null */
     if ( ! geom ) RETURN_NULL();
 
@@ -2945,18 +2943,27 @@ PHP_METHOD(WKBReader, read)
 {
     GEOSWKBReader *reader;
     GEOSGeometry *geom;
-    unsigned char* wkb;
+    zend_string* wkb;
     int wkblen;
 
     reader = (GEOSWKBReader*)getRelay(getThis(), WKBReader_ce_ptr);
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
-        &wkb, &wkblen) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
+#if PHP_VERSION_ID >= 70000
+            "S", &wkb
+#else
+            "s", &wkb, &wkblen
+#endif
+       ) == FAILURE)
     {
         RETURN_NULL();
     }
 
-    geom = GEOSWKBReader_read_r(GEOS_G(handle), reader, wkb, wkblen);
+#if PHP_VERSION_ID >= 70000
+    wkblen = strlen(ZSTR_VAL(wkb));
+#endif
+
+    geom = GEOSWKBReader_read_r(GEOS_G(handle), reader, (unsigned char*)ZSTR_VAL(wkb), wkblen);
     /* we'll probably get an exception if geom is null */
     if ( ! geom ) RETURN_NULL();
 
