@@ -1,7 +1,7 @@
 --TEST--
 WKBWriter tests
 --SKIPIF--
-<?php if (!extension_loaded('geos')) print 'skip'; ?>
+<?php if (!extension_loaded('geos')) { print "skip\n"; exit(0); } ?>
 --FILE--
 <?php
 
