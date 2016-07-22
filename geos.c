@@ -68,7 +68,6 @@ PHP_FUNCTION(GEOSRelateMatch);
 # define GEOS_PHP_HASH_GET_CUR_KEY(s,k,i) zend_hash_get_current_key((s), (k), (i))
 # define GEOS_PHP_HASH_GET_CUR_DATA(h,d) ( d = zend_hash_get_current_data((h)) )
 # define GEOS_PHP_ZVAL zval *
-# define Z_GEOS_OBJ_P(zv) (Proxy *)((char *) (Z_OBJ_P(zv)) - XtOffsetOf(Proxy, std))
 #else /* PHP_VERSION_ID < 70000 */
 # define GEOS_PHP_DTOR_OBJECT void
 # define GEOS_PHP_RETURN_STRING(x) RETURN_STRING((x),0)
@@ -79,11 +78,6 @@ PHP_FUNCTION(GEOSRelateMatch);
 # define ZSTR_VAL(x) (x)
 # define GEOS_PHP_HASH_GET_CUR_DATA(h,d) zend_hash_get_current_data((h),(void**)&(d))
 # define GEOS_PHP_ZVAL zval **
-# ifdef Z_OBJ
-#  define Z_GEOS_OBJ_P(zv) (Proxy*)Z_OBJ(*val TSRMLS_CC)
-# else
-#  define Z_GEOS_OBJ_P(zv) (Proxy*)zend_object_store_get_object(val TSRMLS_CC)
-# endif
 #endif
 
 
@@ -163,6 +157,19 @@ typedef struct Proxy_t {
 #endif
 } Proxy;
 
+#if PHP_VERSION_ID >= 70000
+static inline Proxy *php_geos_fetch_object(zend_object *obj) {
+  return (Proxy *)((char *) obj - XtOffsetOf(Proxy, std));
+}
+# define Z_GEOS_OBJ_P(zv) (Proxy *)((char *) (Z_OBJ_P(zv)) - XtOffsetOf(Proxy, std))
+#else
+# ifdef Z_OBJ
+#  define Z_GEOS_OBJ_P(zv) (Proxy*)Z_OBJ(*val TSRMLS_CC)
+# else
+#  define Z_GEOS_OBJ_P(zv) (Proxy*)zend_object_store_get_object(val TSRMLS_CC)
+# endif
+#endif
+
 static void
 setRelay(zval* val, void* obj) {
     TSRMLS_FETCH();
@@ -234,7 +241,7 @@ Gen_create_obj (zend_class_entry *type,
 
     Proxy *obj = (Proxy *) ecalloc(1, sizeof(Proxy) + zend_object_properties_size(type));
 
-    zend_object_std_init(&obj->std, type);
+    zend_object_std_init(&obj->std, type TSRMLS_CC);
     object_properties_init(&obj->std, type);
 
     obj->std.handlers = handlers;
@@ -693,13 +700,22 @@ dumpGeometry(GEOSGeometry* g, zval* array)
 static void
 Geometry_dtor (GEOS_PHP_DTOR_OBJECT *object TSRMLS_DC)
 {
+#if PHP_VERSION_ID < 70000
     Proxy *obj = (Proxy *)object;
+#else
+    Proxy *obj = php_geos_fetch_object(object);
+#endif
+
     GEOSGeom_destroy_r(GEOS_G(handle), (GEOSGeometry*)obj->relay);
 
+#if PHP_VERSION_ID >= 70000
+    //zend_object_std_dtor(&obj->std);
+#else
     zend_hash_destroy(obj->std.properties);
     FREE_HASHTABLE(obj->std.properties);
 
     efree(obj);
+#endif
 }
 
 static zend_object_value
@@ -2326,13 +2342,23 @@ static zend_object_handlers WKTReader_object_handlers;
 static void
 WKTReader_dtor (GEOS_PHP_DTOR_OBJECT *object TSRMLS_DC)
 {
+#if PHP_VERSION_ID < 70000
     Proxy *obj = (Proxy *)object;
-    GEOSWKTReader_destroy_r(GEOS_G(handle), (GEOSWKTReader*)obj->relay);
+#else
+    Proxy *obj = php_geos_fetch_object(object);
+#endif
 
+    GEOSWKTReader *reader = (GEOSWKTReader*)obj->relay;
+    if (reader) {
+        GEOSWKTReader_destroy_r(GEOS_G(handle), reader);
+    }
+
+#if PHP_VERSION_ID < 70000
     zend_hash_destroy(obj->std.properties);
     FREE_HASHTABLE(obj->std.properties);
 
     efree(obj);
+#endif
 }
 
 static zend_object_value
@@ -2449,13 +2475,22 @@ static zend_object_handlers WKTWriter_object_handlers;
 static void
 WKTWriter_dtor (GEOS_PHP_DTOR_OBJECT *object TSRMLS_DC)
 {
+#if PHP_VERSION_ID < 70000
     Proxy *obj = (Proxy *)object;
+#else
+    Proxy *obj = php_geos_fetch_object(object);
+#endif
+
     GEOSWKTWriter_destroy_r(GEOS_G(handle), (GEOSWKTWriter*)obj->relay);
 
+#if PHP_VERSION_ID >= 70000
+    //zend_object_std_dtor(&obj->std);
+#else
     zend_hash_destroy(obj->std.properties);
     FREE_HASHTABLE(obj->std.properties);
 
     efree(obj);
+#endif
 }
 
 static zend_object_value
@@ -2634,13 +2669,22 @@ static zend_object_handlers WKBWriter_object_handlers;
 static void
 WKBWriter_dtor (GEOS_PHP_DTOR_OBJECT *object TSRMLS_DC)
 {
+#if PHP_VERSION_ID < 70000
     Proxy *obj = (Proxy *)object;
+#else
+    Proxy *obj = php_geos_fetch_object(object);
+#endif
+
     GEOSWKBWriter_destroy_r(GEOS_G(handle), (GEOSWKBWriter*)obj->relay);
 
+#if PHP_VERSION_ID >= 70000
+    //zend_object_std_dtor(&obj->std);
+#else
     zend_hash_destroy(obj->std.properties);
     FREE_HASHTABLE(obj->std.properties);
 
     efree(obj);
+#endif
 }
 
 static zend_object_value
@@ -2858,7 +2902,12 @@ static zend_object_handlers WKBReader_object_handlers;
 static void
 WKBReader_dtor (GEOS_PHP_DTOR_OBJECT *object TSRMLS_DC)
 {
+#if PHP_VERSION_ID < 70000
     Proxy *obj = (Proxy *)object;
+#else
+    Proxy *obj = php_geos_fetch_object(object);
+#endif
+
     GEOSWKBReader_destroy_r(GEOS_G(handle), (GEOSWKBReader*)obj->relay);
 
 #if PHP_VERSION_ID >= 70000
@@ -3200,6 +3249,7 @@ PHP_MINIT_FUNCTION(geos)
         zend_get_std_object_handlers(), sizeof(zend_object_handlers));
     WKTReader_object_handlers.clone_obj = NULL;
 #if PHP_VERSION_ID >= 70000
+    WKTReader_object_handlers.offset = XtOffsetOf(Proxy, std);
     WKTReader_object_handlers.free_obj = WKTReader_dtor;
 #endif
 
@@ -3211,6 +3261,7 @@ PHP_MINIT_FUNCTION(geos)
         zend_get_std_object_handlers(), sizeof(zend_object_handlers));
     WKTWriter_object_handlers.clone_obj = NULL;
 #if PHP_VERSION_ID >= 70000
+    WKTWriter_object_handlers.offset = XtOffsetOf(Proxy, std);
     WKTWriter_object_handlers.free_obj = WKTWriter_dtor;
 #endif
 
@@ -3225,6 +3276,7 @@ PHP_MINIT_FUNCTION(geos)
     Geometry_ce_ptr->serialize = Geometry_serialize;
     Geometry_ce_ptr->unserialize = Geometry_deserialize;
 #if PHP_VERSION_ID >= 70000
+    Geometry_object_handlers.offset = XtOffsetOf(Proxy, std);
     Geometry_object_handlers.free_obj = Geometry_dtor;
 #endif
 
@@ -3236,6 +3288,7 @@ PHP_MINIT_FUNCTION(geos)
         zend_get_std_object_handlers(), sizeof(zend_object_handlers));
     WKBWriter_object_handlers.clone_obj = NULL;
 #if PHP_VERSION_ID >= 70000
+    WKBWriter_object_handlers.offset = XtOffsetOf(Proxy, std);
     WKBWriter_object_handlers.free_obj = WKBWriter_dtor;
 #endif
 
@@ -3247,6 +3300,7 @@ PHP_MINIT_FUNCTION(geos)
         zend_get_std_object_handlers(), sizeof(zend_object_handlers));
     WKBReader_object_handlers.clone_obj = NULL;
 #if PHP_VERSION_ID >= 70000
+    WKBReader_object_handlers.offset = XtOffsetOf(Proxy, std);
     WKBReader_object_handlers.free_obj = WKBReader_dtor;
 #endif
 
