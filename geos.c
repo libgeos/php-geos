@@ -57,8 +57,25 @@ PHP_FUNCTION(GEOSRelateMatch);
 #define zend_function_entry function_entry
 #endif
 
-#if PHP_VERSION_ID > 70000
+#if PHP_VERSION_ID >= 70000
 # define zend_object_value zend_object *
+# define zend_uint size_t
+# define MAKE_STD_ZVAL(x) x = emalloc(sizeof(zval))
+# define GEOS_PHP_RETURN_STRING(x) RETURN_STRING((x))
+# define GEOS_PHP_RETURN_STRINGL(x,s) RETURN_STRINGL((x),(s))
+# define GEOS_PHP_ADD_ASSOC_ARRAY(a,k,v) add_assoc_string((a), (k), (v))
+# define GEOS_PHP_HASH_GET_CUR_KEY(s,k,i) zend_hash_get_current_key((s), (k), (i))
+# define GEOS_PHP_HASH_GET_CUR_DATA(h,d) ( d = zend_hash_get_current_data((h)) )
+# define GEOS_PHP_ZVAL zval *
+#else /* PHP_VERSION_ID < 70000 */
+# define GEOS_PHP_RETURN_STRING(x) RETURN_STRING((x),0)
+# define GEOS_PHP_RETURN_STRINGL(x,s) RETURN_STRINGL((x),(s),0)
+# define GEOS_PHP_ADD_ASSOC_ARRAY(a,k,v) add_assoc_string((a), (k), (v), 0)
+# define GEOS_PHP_HASH_GET_CUR_KEY(s,k,i) zend_hash_get_current_key((s), (k), (i), 0)
+# define zend_string char
+# define ZSTR_VAL(x) (x)
+# define GEOS_PHP_HASH_GET_CUR_DATA(h,d) zend_hash_get_current_data((h),(void**)&(d));
+# define GEOS_PHP_ZVAL zval **
 #endif
 
 
@@ -162,12 +179,16 @@ getRelay(zval* val, zend_class_entry* ce) {
     return proxy->relay;
 }
 
-static long getZvalAsLong(zval* val)
+static long getZvalAsLong(GEOS_PHP_ZVAL val)
 {
     long ret;
     zval tmp;
 
+#if PHP_VERSION_ID >= 70000
     tmp = *val;
+#else
+    tmp = **val;
+#endif
     zval_copy_ctor(&tmp);
     convert_to_long(&tmp);
     ret = Z_LVAL(tmp);
@@ -175,12 +196,16 @@ static long getZvalAsLong(zval* val)
     return ret;
 }
 
-static long getZvalAsDouble(zval* val)
+static long getZvalAsDouble(GEOS_PHP_ZVAL val)
 {
     double ret;
     zval tmp;
 
+#if PHP_VERSION_ID >= 70000
     tmp = *val;
+#else
+    tmp = **val;
+#endif
     zval_copy_ctor(&tmp);
     convert_to_double(&tmp);
     ret = Z_DVAL(tmp);
@@ -194,10 +219,26 @@ Gen_create_obj (zend_class_entry *type,
     zend_object_handlers* handlers)
 {
     TSRMLS_FETCH();
+
+#if PHP_VERSION_ID >= 70000
+
+    Proxy *obj = (Proxy *) ecalloc(1, sizeof(Proxy) + zend_object_properties_size(type));
+
+    zend_object_std_init(&obj->std, type);
+    object_properties_init(&obj->std, type);
+
+    obj->std.handlers = handlers;
+
+    /* TODO: install the destructor (dtor) ! */
+
+    return &obj->std;
+
+#else /* PHP_VERSION_ID < 70000 */
+
     zend_object_value retval;
 
-    Proxy *obj = (Proxy *)emalloc(sizeof(Proxy));
-    memset(obj, 0, sizeof(Proxy));
+    Proxy *obj = (Proxy *)ecalloc(1, sizeof(Proxy));
+
     obj->std.ce = type;
 
     ALLOC_HASHTABLE(obj->std.properties);
@@ -213,6 +254,8 @@ Gen_create_obj (zend_class_entry *type,
     retval.handlers = handlers;
 
     return retval;
+
+#endif /* PHP_VERSION_ID < 70000 */
 }
 
 
@@ -612,11 +655,6 @@ dumpGeometry(GEOSGeometry* g, zval* array)
     TSRMLS_FETCH();
     int ngeoms, i;
 
-    /*
-    MAKE_STD_ZVAL(array);
-    array_init(array);
-    */
-
     ngeoms = GEOSGetNumGeometries_r(GEOS_G(handle), g);
     for (i=0; i<ngeoms; ++i)
     {
@@ -690,7 +728,7 @@ PHP_METHOD(Geometry, __toString)
     ret = estrdup(wkt);
     GEOSFree_r(GEOS_G(handle), wkt);
 
-    RETURN_STRING(ret, 0);
+    GEOS_PHP_RETURN_STRING(ret);
 }
 
 PHP_METHOD(Geometry, project)
@@ -785,9 +823,9 @@ PHP_METHOD(Geometry, buffer)
     double mitreLimit = default_mitreLimit;
     long singleSided = 0;
     zval *style_val = NULL;
-    zval **data;
+    GEOS_PHP_ZVAL data;
     HashTable *style;
-    char *key;
+    zend_string *key;
     ulong index;
 
     this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
@@ -802,37 +840,37 @@ PHP_METHOD(Geometry, buffer)
     if ( style_val )
     {
         style = HASH_OF(style_val);
-        while(zend_hash_get_current_key(style, &key, &index, 0)
+        while(GEOS_PHP_HASH_GET_CUR_KEY(style, &key, &index)
               == HASH_KEY_IS_STRING)
         {
-            if(!strcmp(key, "quad_segs"))
+            if(!strcmp(ZSTR_VAL(key), "quad_segs"))
             {
-                zend_hash_get_current_data(style, (void**)&data);
-                quadSegs = getZvalAsLong(*data);
+                GEOS_PHP_HASH_GET_CUR_DATA(style, data);
+                quadSegs = getZvalAsLong(data);
                 GEOSBufferParams_setQuadrantSegments_r(GEOS_G(handle), params, quadSegs);
             }
-            else if(!strcmp(key, "endcap"))
+            else if(!strcmp(ZSTR_VAL(key), "endcap"))
             {
-                zend_hash_get_current_data(style, (void**)&data);
-                endCapStyle = getZvalAsLong(*data);
+                GEOS_PHP_HASH_GET_CUR_DATA(style, data);
+                endCapStyle = getZvalAsLong(data);
                 GEOSBufferParams_setEndCapStyle_r(GEOS_G(handle), params, endCapStyle);
             }
-            else if(!strcmp(key, "join"))
+            else if(!strcmp(ZSTR_VAL(key), "join"))
             {
-                zend_hash_get_current_data(style, (void**)&data);
-                joinStyle = getZvalAsLong(*data);
+                GEOS_PHP_HASH_GET_CUR_DATA(style, data);
+                joinStyle = getZvalAsLong(data);
                 GEOSBufferParams_setJoinStyle_r(GEOS_G(handle), params, joinStyle);
             }
-            else if(!strcmp(key, "mitre_limit"))
+            else if(!strcmp(ZSTR_VAL(key), "mitre_limit"))
             {
-                zend_hash_get_current_data(style, (void**)&data);
-                mitreLimit = getZvalAsDouble(*data);
+                GEOS_PHP_HASH_GET_CUR_DATA(style, data);
+                mitreLimit = getZvalAsDouble(data);
                 GEOSBufferParams_setMitreLimit_r(GEOS_G(handle), params, mitreLimit);
             }
-            else if(!strcmp(key, "single_sided"))
+            else if(!strcmp(ZSTR_VAL(key), "single_sided"))
             {
-                zend_hash_get_current_data(style, (void**)&data);
-                singleSided = getZvalAsLong(*data);
+                GEOS_PHP_HASH_GET_CUR_DATA(style, data);
+                singleSided = getZvalAsLong(data);
                 GEOSBufferParams_setSingleSided_r(GEOS_G(handle), params, singleSided);
             }
 
@@ -878,9 +916,9 @@ PHP_METHOD(Geometry, offsetCurve)
     long int joinStyle = default_joinStyle;
     double mitreLimit = default_mitreLimit;
     zval *style_val = NULL;
-    zval **data;
+    GEOS_PHP_ZVAL data;
     HashTable *style;
-    char *key;
+    zend_string *key;
     ulong index;
 
     this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
@@ -893,23 +931,23 @@ PHP_METHOD(Geometry, offsetCurve)
     if ( style_val )
     {
         style = HASH_OF(style_val);
-        while(zend_hash_get_current_key(style, &key, &index, 0)
+        while(GEOS_PHP_HASH_GET_CUR_KEY(style, &key, &index)
               == HASH_KEY_IS_STRING)
         {
-            if(!strcmp(key, "quad_segs"))
+            if(!strcmp(ZSTR_VAL(key), "quad_segs"))
             {
-                zend_hash_get_current_data(style, (void**)&data);
-                quadSegs = getZvalAsLong(*data);
+                GEOS_PHP_HASH_GET_CUR_DATA(style, data);
+                quadSegs = getZvalAsLong(data);
             }
-            else if(!strcmp(key, "join"))
+            else if(!strcmp(ZSTR_VAL(key), "join"))
             {
-                zend_hash_get_current_data(style, (void**)&data);
-                joinStyle = getZvalAsLong(*data);
+                GEOS_PHP_HASH_GET_CUR_DATA(style, data);
+                joinStyle = getZvalAsLong(data);
             }
-            else if(!strcmp(key, "mitre_limit"))
+            else if(!strcmp(ZSTR_VAL(key), "mitre_limit"))
             {
-                zend_hash_get_current_data(style, (void**)&data);
-                mitreLimit = getZvalAsDouble(*data);
+                GEOS_PHP_HASH_GET_CUR_DATA(style, data);
+                mitreLimit = getZvalAsDouble(data);
             }
 
             zend_hash_move_forward(style);
@@ -1168,7 +1206,7 @@ PHP_METHOD(Geometry, relate)
         if ( ! pat ) RETURN_NULL(); /* should get an exception first */
         retStr = estrdup(pat);
         GEOSFree_r(GEOS_G(handle), pat);
-        RETURN_STRING(retStr, 0);
+        GEOS_PHP_RETURN_STRING(retStr);
     } else {
         retInt = GEOSRelatePattern_r(GEOS_G(handle), this, other, pat);
         if ( retInt == 2 ) RETURN_NULL(); /* should get an exception first */
@@ -1206,7 +1244,7 @@ PHP_METHOD(Geometry, relateBoundaryNodeRule)
     if ( ! pat ) RETURN_NULL(); /* should get an exception first */
     retStr = estrdup(pat);
     GEOSFree_r(GEOS_G(handle), pat);
-    RETURN_STRING(retStr, 0);
+    GEOS_PHP_RETURN_STRING(retStr);
 }
 #endif
 
@@ -1691,7 +1729,7 @@ PHP_METHOD(Geometry, checkValidity)
     /* return value is an array */
     array_init(return_value);
     add_assoc_bool(return_value, "valid", retBool);
-    if ( reasonVal ) add_assoc_string(return_value, "reason", reasonVal, 0);
+    if ( reasonVal ) GEOS_PHP_ADD_ASSOC_ARRAY(return_value, "reason", reasonVal);
     if ( locationVal ) add_assoc_zval(return_value, "location", locationVal);
 
 }
@@ -1794,7 +1832,7 @@ PHP_METHOD(Geometry, typeName)
     typVal = estrdup(typ);
     GEOSFree_r(GEOS_G(handle), typ);
 
-    RETURN_STRING(typVal, 0);
+    GEOS_PHP_RETURN_STRING(typVal);
 }
 
 /**
@@ -2440,7 +2478,7 @@ PHP_METHOD(WKTWriter, write)
     retstr = estrdup(wkt);
     GEOSFree_r(GEOS_G(handle), wkt);
 
-    RETURN_STRING(retstr, 0);
+    GEOS_PHP_RETURN_STRING(retstr);
 }
 
 #ifdef HAVE_GEOS_WKT_WRITER_SET_TRIM
@@ -2667,7 +2705,7 @@ PHP_METHOD(WKBWriter, write)
     retstr = estrndup(ret, retsize);
     GEOSFree_r(GEOS_G(handle), ret);
 
-    RETURN_STRINGL(retstr, retsize, 0);
+    GEOS_PHP_RETURN_STRINGL(retstr, retsize);
 }
 
 /**
@@ -2699,7 +2737,7 @@ PHP_METHOD(WKBWriter, writeHEX)
     retstr = estrndup(ret, retsize);
     GEOSFree_r(GEOS_G(handle), ret);
 
-    RETURN_STRING(retstr, 0);
+    GEOS_PHP_RETURN_STRING(retstr);
 }
 
 /**
@@ -2886,7 +2924,7 @@ PHP_FUNCTION(GEOSVersion)
     char *str;
 
     str = estrdup(GEOSversion());
-    RETURN_STRING(str, 0);
+    GEOS_PHP_RETURN_STRING(str);
 }
 
 /**
