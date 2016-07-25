@@ -64,7 +64,7 @@ PHP_FUNCTION(GEOSRelateMatch);
 # define MAKE_STD_ZVAL(x) x = emalloc(sizeof(zval))
 # define GEOS_PHP_RETURN_STRING(x) { RETVAL_STRING((x)); efree((x)); return; }
 # define GEOS_PHP_RETURN_STRINGL(x,s) RETURN_STRINGL((x),(s))
-# define GEOS_PHP_ADD_ASSOC_ARRAY(a,k,v) add_assoc_string((a), (k), (v))
+# define GEOS_PHP_ADD_ASSOC_ARRAY(a,k,v) { add_assoc_string((a), (k), (v)); efree((v)); }
 # define GEOS_PHP_ADD_ASSOC_ZVAL(a,k,v) { add_assoc_zval((a), (k), (v)); efree((v)); }
 # define GEOS_PHP_HASH_GET_CUR_KEY(s,k,i) zend_hash_get_current_key((s), (k), (i))
 # define GEOS_PHP_HASH_GET_CUR_DATA(h,d) ( d = zend_hash_get_current_data((h)) )
