@@ -1,7 +1,7 @@
 --TEST--
 WKTReader tests
 --SKIPIF--
-<?php if (!extension_loaded('geos')) { print "skip\n"; exit(0); } ?>
+<?php if (!extension_loaded('geos')) { print "geos extension not loaded\n"; exit(1); } ?>
 --FILE--
 <?php
 
