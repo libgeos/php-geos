@@ -3,3 +3,10 @@ RUN apt-get update -qq && apt-get install -y build-essential
 RUN apt-get update -qq && apt-get install -y autoconf
 RUN apt-get update -qq && apt-get install -y php5-dev
 RUN apt-get update -qq && apt-get install -y libgeos-dev
+RUN curl -o php-7.0.7.tar.bz2 http://ar2.php.net/distributions/php-7.0.7.tar.bz2
+RUN tar xjf php-7.0.7.tar.bz2
+RUN apt-get update -qq && apt-get install -y libxml2-dev
+RUN cd php-7.0.7 && \
+    ./configure --prefix=/opt/php-7.0.7 --enable-debug && \
+    make install
+RUN cd .. && rm -rf php-7.0.7*
