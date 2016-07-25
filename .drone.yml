@@ -4,7 +4,7 @@ pipeline:
     image: docker.kbt.io/php-geos/build-test:trisquel
     commands:
       - export PATH=${PHP_BIN}:${PATH}
-      - which php
+      - php --version
       - ./autogen.sh
       - ./configure
       - make
