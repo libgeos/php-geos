@@ -1222,7 +1222,11 @@ PHP_METHOD(Geometry, relate)
     GEOSGeometry *other;
     zval *zobj;
     char* pat = NULL;
+#if PHP_VERSION_ID >= 70000
+    size_t patlen;
+#else
     int patlen;
+#endif
     int retInt;
     zend_bool retBool;
     char* retStr;
@@ -2983,7 +2987,11 @@ PHP_METHOD(WKBReader, readHEX)
     GEOSWKBReader *reader;
     GEOSGeometry *geom;
     unsigned char* wkb;
+#if PHP_VERSION_ID >= 70000
+    size_t wkblen;
+#else
     int wkblen;
+#endif
 
     reader = (GEOSWKBReader*)getRelay(getThis(), WKBReader_ce_ptr);
 
@@ -3225,9 +3233,14 @@ PHP_METHOD(Geometry, voronoiDiagram)
 PHP_FUNCTION(GEOSRelateMatch)
 {
     char* mat = NULL;
-    int matlen;
     char* pat = NULL;
+#if PHP_VERSION_ID >= 70000
+    size_t matlen;
+    size_t patlen;
+#else
+    int matlen;
     int patlen;
+#endif
     int ret;
     zend_bool retBool;
 
