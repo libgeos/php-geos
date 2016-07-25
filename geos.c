@@ -65,6 +65,7 @@ PHP_FUNCTION(GEOSRelateMatch);
 # define GEOS_PHP_RETURN_STRING(x) { RETVAL_STRING((x)); efree((x)); return; }
 # define GEOS_PHP_RETURN_STRINGL(x,s) RETURN_STRINGL((x),(s))
 # define GEOS_PHP_ADD_ASSOC_ARRAY(a,k,v) add_assoc_string((a), (k), (v))
+# define GEOS_PHP_ADD_ASSOC_ZVAL(a,k,v) { add_assoc_zval((a), (k), (v)); efree((v)); }
 # define GEOS_PHP_HASH_GET_CUR_KEY(s,k,i) zend_hash_get_current_key((s), (k), (i))
 # define GEOS_PHP_HASH_GET_CUR_DATA(h,d) ( d = zend_hash_get_current_data((h)) )
 # define GEOS_PHP_ZVAL zval *
@@ -73,6 +74,7 @@ PHP_FUNCTION(GEOSRelateMatch);
 # define GEOS_PHP_RETURN_STRING(x) RETURN_STRING((x),0)
 # define GEOS_PHP_RETURN_STRINGL(x,s) RETURN_STRINGL((x),(s),0)
 # define GEOS_PHP_ADD_ASSOC_ARRAY(a,k,v) add_assoc_string((a), (k), (v), 0)
+# define GEOS_PHP_ADD_ASSOC_ZVAL(a,k,v) add_assoc_zval((a), (k), (v))
 # define GEOS_PHP_HASH_GET_CUR_KEY(s,k,i) zend_hash_get_current_key((s), (k), (i), 0)
 # define zend_string char
 # define ZSTR_VAL(x) (x)
@@ -693,6 +695,9 @@ dumpGeometry(GEOSGeometry* g, zval* array)
         object_init_ex(tmp, Geometry_ce_ptr);
         setRelay(tmp, cc);
         add_next_index_zval(array, tmp);
+#if PHP_VERSION_ID >= 70000
+        efree(tmp);
+#endif
     }
 }
 
@@ -1762,7 +1767,7 @@ PHP_METHOD(Geometry, checkValidity)
     array_init(return_value);
     add_assoc_bool(return_value, "valid", retBool);
     if ( reasonVal ) GEOS_PHP_ADD_ASSOC_ARRAY(return_value, "reason", reasonVal);
-    if ( locationVal ) add_assoc_zval(return_value, "location", locationVal);
+    if ( locationVal ) GEOS_PHP_ADD_ASSOC_ZVAL(return_value, "location", locationVal);
 
 }
 #endif
@@ -3062,25 +3067,25 @@ PHP_FUNCTION(GEOSPolygonize)
     array_init(array_elem);
     dumpGeometry(rings, array_elem);
     GEOSGeom_destroy_r(GEOS_G(handle), rings);
-    add_assoc_zval(return_value, "rings", array_elem);
+    GEOS_PHP_ADD_ASSOC_ZVAL(return_value, "rings", array_elem);
 
     MAKE_STD_ZVAL(array_elem);
     array_init(array_elem);
     dumpGeometry(cut_edges, array_elem);
     GEOSGeom_destroy_r(GEOS_G(handle), cut_edges);
-    add_assoc_zval(return_value, "cut_edges", array_elem);
+    GEOS_PHP_ADD_ASSOC_ZVAL(return_value, "cut_edges", array_elem);
 
     MAKE_STD_ZVAL(array_elem);
     array_init(array_elem);
     dumpGeometry(dangles, array_elem);
     GEOSGeom_destroy_r(GEOS_G(handle), dangles);
-    add_assoc_zval(return_value, "dangles", array_elem);
+    GEOS_PHP_ADD_ASSOC_ZVAL(return_value, "dangles", array_elem);
 
     MAKE_STD_ZVAL(array_elem);
     array_init(array_elem);
     dumpGeometry(invalid_rings, array_elem);
     GEOSGeom_destroy_r(GEOS_G(handle), invalid_rings);
-    add_assoc_zval(return_value, "invalid_rings", array_elem);
+    GEOS_PHP_ADD_ASSOC_ZVAL(return_value, "invalid_rings", array_elem);
 
 }
 
