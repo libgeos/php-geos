@@ -22,6 +22,14 @@ You need:
   - GEOS development files
     ( often found in packages named something like 'libgeos-dev' )
 
+## Procedure
+
+   git clone https://git.osgeo.org/gogs/geos/php-geos.git
+   cd php-geos
+   ./autogen.sh
+   ./configure
+   make # generates modules/geos.so
+
 # Testing
 
 Automated testing is executed on 'make check'.
