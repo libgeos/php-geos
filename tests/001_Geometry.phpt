@@ -15,11 +15,11 @@ class GeometryTest extends GEOSTest
 
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setTrim')) {
+        if (method_exists("GEOSWKTWriter", 'setTrim')) {
             $writer->setTrim(TRUE);
         }
 
-        if (method_exists(GEOSWKTWriter::class, 'setOutputDimension')) {
+        if (method_exists("GEOSWKTWriter", 'setOutputDimension')) {
             $writer->setOutputDimension(3);
         }
 
@@ -91,7 +91,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setTrim')) {
+        if (method_exists("GEOSWKTWriter", 'setTrim')) {
             $writer->setTrim(TRUE);
         }
 
@@ -135,7 +135,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -240,7 +240,7 @@ class GeometryTest extends GEOSTest
 
     public function testGeometry_offsetCurve()
     {
-        if (!method_exists(GEOSGeometry::class, 'offsetCurve')) {
+        if (!method_exists("GEOSGeometry", 'offsetCurve')) {
             return;
         }
 
@@ -309,7 +309,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -327,7 +327,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -382,7 +382,7 @@ class GeometryTest extends GEOSTest
 
     public function testGeometry_clipByRect()
     {
-        if (!method_exists(GEOSGeometry::class, 'clipByRect')) {
+        if (!method_exists("GEOSGeometry", 'clipByRect')) {
             return;
         }
 
@@ -415,7 +415,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -437,7 +437,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -495,7 +495,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -553,7 +553,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -575,7 +575,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -633,7 +633,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -696,7 +696,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -718,7 +718,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -740,7 +740,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -781,14 +781,14 @@ class GeometryTest extends GEOSTest
 
     public function testGeometry_relateBoundaryNodeRule()
     {
-        if (!method_exists(GEOSGeometry::class, 'relateBoundaryNodeRule')) {
+        if (!method_exists("GEOSGeometry", 'relateBoundaryNodeRule')) {
             return;
         }
 
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -808,7 +808,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -879,7 +879,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -908,7 +908,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -924,7 +924,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -937,14 +937,14 @@ class GeometryTest extends GEOSTest
 
     public function testGeometry_extractUniquePoints()
     {
-        if (!method_exists(GEOSGeometry::class, 'extractUniquePoints')) {
+        if (!method_exists("GEOSGeometry", 'extractUniquePoints')) {
             return;
         }
 
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -975,7 +975,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -992,11 +992,11 @@ class GeometryTest extends GEOSTest
         $this->assertTrue( $g1->equals($g2) );
         $this->assertTrue( $g1->equalsExact($g2) );
 
-        if (method_exists(GEOSGeometry::class, 'covers')) {
+        if (method_exists("GEOSGeometry", 'covers')) {
             $this->assertTrue( $g1->covers($g2) );
         }
 
-        if (method_exists(GEOSGeometry::class, 'coveredBy')) {
+        if (method_exists("GEOSGeometry", 'coveredBy')) {
             $this->assertTrue( $g1->coveredBy($g2) );
         }
 
@@ -1013,11 +1013,11 @@ class GeometryTest extends GEOSTest
         $this->assertFalse( $g1->equals($g2) );
         $this->assertFalse( $g1->equalsExact($g2, 10) );
 
-        if (method_exists(GEOSGeometry::class, 'covers')) {
+        if (method_exists("GEOSGeometry", 'covers')) {
             $this->assertFalse( $g1->covers($g2) );
         }
 
-        if (method_exists(GEOSGeometry::class, 'coveredBy')) {
+        if (method_exists("GEOSGeometry", 'coveredBy')) {
             $this->assertTrue( $g1->coveredBy($g2) );
         }
 
@@ -1034,11 +1034,11 @@ class GeometryTest extends GEOSTest
         $this->assertFalse( $g1->equals($g2) );
         $this->assertFalse( $g1->equalsExact($g2, 10) );
 
-        if (method_exists(GEOSGeometry::class, 'covers')) {
+        if (method_exists("GEOSGeometry", 'covers')) {
             $this->assertFalse( $g1->covers($g2) );
         }
 
-        if (method_exists(GEOSGeometry::class, 'coveredBy')) {
+        if (method_exists("GEOSGeometry", 'coveredBy')) {
             $this->assertTrue( $g1->coveredBy($g2) );
         }
 
@@ -1055,11 +1055,11 @@ class GeometryTest extends GEOSTest
         $this->assertFalse( $g1->equals($g2) );
         $this->assertFalse( $g1->equalsExact($g2, 1) );
 
-        if (method_exists(GEOSGeometry::class, 'covers')) {
+        if (method_exists("GEOSGeometry", 'covers')) {
             $this->assertFalse( $g1->covers($g2) );
         }
 
-        if (method_exists(GEOSGeometry::class, 'coveredBy')) {
+        if (method_exists("GEOSGeometry", 'coveredBy')) {
             $this->assertFalse( $g1->coveredBy($g2) );
         }
 
@@ -1076,11 +1076,11 @@ class GeometryTest extends GEOSTest
         $this->assertFalse( $g1->equals($g2) );
         $this->assertFalse( $g1->equalsExact($g2, 1) );
 
-        if (method_exists(GEOSGeometry::class, 'covers')) {
+        if (method_exists("GEOSGeometry", 'covers')) {
             $this->assertFalse( $g1->covers($g2) );
         }
 
-        if (method_exists(GEOSGeometry::class, 'coveredBy')) {
+        if (method_exists("GEOSGeometry", 'coveredBy')) {
             $this->assertFalse( $g1->coveredBy($g2) );
         }
 
@@ -1097,11 +1097,11 @@ class GeometryTest extends GEOSTest
         $this->assertTrue( $g1->equals($g2) );
         $this->assertFalse( $g1->equalsExact($g2, 1) );
 
-        if (method_exists(GEOSGeometry::class, 'covers')) {
+        if (method_exists("GEOSGeometry", 'covers')) {
             $this->assertTrue( $g1->covers($g2) );
         }
 
-        if (method_exists(GEOSGeometry::class, 'coveredBy')) {
+        if (method_exists("GEOSGeometry", 'coveredBy')) {
             $this->assertTrue( $g1->coveredBy($g2) );
         }
 
@@ -1118,11 +1118,11 @@ class GeometryTest extends GEOSTest
         $this->assertFalse( $g1->equals($g2) );
         $this->assertFalse( $g1->equalsExact($g2, 1) );
 
-        if (method_exists(GEOSGeometry::class, 'covers')) {
+        if (method_exists("GEOSGeometry", 'covers')) {
             $this->assertFalse( $g1->covers($g2) );
         }
 
-        if (method_exists(GEOSGeometry::class, 'coveredBy')) {
+        if (method_exists("GEOSGeometry", 'coveredBy')) {
             $this->assertFalse( $g1->coveredBy($g2) );
         }
 
@@ -1139,11 +1139,11 @@ class GeometryTest extends GEOSTest
         $this->assertFalse( $g1->equals($g2) );
         $this->assertFalse( $g1->equalsExact($g2, 1) );
 
-        if (method_exists(GEOSGeometry::class, 'covers')) {
+        if (method_exists("GEOSGeometry", 'covers')) {
             $this->assertFalse( $g1->covers($g2) );
         }
 
-        if (method_exists(GEOSGeometry::class, 'coveredBy')) {
+        if (method_exists("GEOSGeometry", 'coveredBy')) {
             $this->assertFalse( $g1->coveredBy($g2) );
         }
 
@@ -1160,11 +1160,11 @@ class GeometryTest extends GEOSTest
         $this->assertFalse( $g1->equals($g2) );
         $this->assertFalse( $g1->equalsExact($g2, 1) );
 
-        if (method_exists(GEOSGeometry::class, 'covers')) {
+        if (method_exists("GEOSGeometry", 'covers')) {
             $this->assertTrue( $g1->covers($g2) );
         }
 
-        if (method_exists(GEOSGeometry::class, 'coveredBy')) {
+        if (method_exists("GEOSGeometry", 'coveredBy')) {
             $this->assertFalse( $g1->coveredBy($g2) );
         }
 
@@ -1175,7 +1175,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -1206,14 +1206,14 @@ class GeometryTest extends GEOSTest
 
     public function testGeometry_checkValidity()
     {
-        if (!method_exists(GEOSGeometry::class, 'checkValidity')) {
+        if (!method_exists("GEOSGeometry", 'checkValidity')) {
             return;
         }
 
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -1295,7 +1295,7 @@ class GeometryTest extends GEOSTest
 
     public function testGeometry_isClosed()
     {
-        if (!method_exists(GEOSGeometry::class, 'isClosed')) {
+        if (!method_exists("GEOSGeometry", 'isClosed')) {
             return;
         }
 
@@ -1445,7 +1445,7 @@ class GeometryTest extends GEOSTest
 
     public function testGeometry_numPoints()
     {
-        if (!method_exists(GEOSGeometry::class, 'numPoints')) {
+        if (!method_exists("GEOSGeometry", 'numPoints')) {
             return;
         }
 
@@ -1466,11 +1466,11 @@ class GeometryTest extends GEOSTest
 
     public function testGeometry_getXY()
     {
-        if (!method_exists(GEOSGeometry::class, 'getX')) {
+        if (!method_exists("GEOSGeometry", 'getX')) {
             return;
         }
 
-        if (!method_exists(GEOSGeometry::class, 'getY')) {
+        if (!method_exists("GEOSGeometry", 'getY')) {
             return;
         }
 
@@ -1502,7 +1502,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -1542,7 +1542,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -1643,7 +1643,7 @@ class GeometryTest extends GEOSTest
 
     public function testGeometry_coordinateDimension()
     {
-        if (!method_exists(GEOSGeometry::class, 'coordinateDimension')) {
+        if (!method_exists("GEOSGeometry", 'coordinateDimension')) {
             return;
         }
 
@@ -1659,7 +1659,7 @@ class GeometryTest extends GEOSTest
 
     public function testGeometry_pointN()
     {
-        if (!method_exists(GEOSGeometry::class, 'pointN')) {
+        if (!method_exists("GEOSGeometry", 'pointN')) {
             return;
         }
 
@@ -1692,18 +1692,18 @@ class GeometryTest extends GEOSTest
 
     public function testGeometry_startendPoint()
     {
-        if (!method_exists(GEOSGeometry::class, 'startPoint')) {
+        if (!method_exists("GEOSGeometry", 'startPoint')) {
             return;
         }
 
-        if (!method_exists(GEOSGeometry::class, 'endPoint')) {
+        if (!method_exists("GEOSGeometry", 'endPoint')) {
             return;
         }
 
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -1731,7 +1731,7 @@ class GeometryTest extends GEOSTest
         $reader = new GEOSWKTReader();
         $writer = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             $writer->setRoundingPrecision(0);
         }
 
@@ -1797,7 +1797,7 @@ class GeometryTest extends GEOSTest
 
     public function testGeometry_delaunayTriangulation()
     {
-        if (!method_exists(GEOSGeometry::class, 'delaunayTriangulation')) {
+        if (!method_exists("GEOSGeometry", 'delaunayTriangulation')) {
             return;
         }
 
@@ -1817,7 +1817,7 @@ class GeometryTest extends GEOSTest
 
     public function testGeometry_voronoiDiagram()
     {
-        if (!method_exists(GEOSGeometry::class, 'voronoiDiagram')) {
+        if (!method_exists("GEOSGeometry", 'voronoiDiagram')) {
             return;
         }
 
@@ -1840,7 +1840,7 @@ class GeometryTest extends GEOSTest
 
     public function testGeometry_snapTo()
     {
-        if (!method_exists(GEOSGeometry::class, 'snapTo')) {
+        if (!method_exists("GEOSGeometry", 'snapTo')) {
             return;
         }
 
@@ -1861,7 +1861,7 @@ class GeometryTest extends GEOSTest
 
     public function testGeometry_node()
     {
-        if (!method_exists(GEOSGeometry::class, 'node')) {
+        if (!method_exists("GEOSGeometry", 'node')) {
             return;
         }
 

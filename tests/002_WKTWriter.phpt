@@ -35,7 +35,7 @@ class WKTWriterTest extends GEOSTest
 
     public function testWKTWriter_setTrim()
     {
-        if (!method_exists(GEOSWKTWriter::class, 'setTrim')) {
+        if (!method_exists("GEOSWKTWriter", 'setTrim')) {
             return;
         }
 
@@ -60,7 +60,7 @@ class WKTWriterTest extends GEOSTest
         $r = new GEOSWKTReader();
         $w = new GEOSWKTWriter();
 
-        if (method_exists(GEOSWKTWriter::class, 'setTrim')) {
+        if (method_exists("GEOSWKTWriter", 'setTrim')) {
             $w->setTrim(TRUE);
         }
 
@@ -87,7 +87,7 @@ class WKTWriterTest extends GEOSTest
 
     public function testWKTWriter_setRoundingPrecision()
     {
-        if (!method_exists(GEOSWKTWriter::class, 'setRoundingPrecision')) {
+        if (!method_exists("GEOSWKTWriter", 'setRoundingPrecision')) {
             return;
         }
 
@@ -115,7 +115,7 @@ class WKTWriterTest extends GEOSTest
 
     public function testWKTWriter_getOutputDimension()
     {
-        if (!method_exists(GEOSWKTWriter::class, 'getOutputDimension')) {
+        if (!method_exists("GEOSWKTWriter", 'getOutputDimension')) {
             return;
         }
 
@@ -125,7 +125,7 @@ class WKTWriterTest extends GEOSTest
 
     public function testWKTWriter_setOutputDimension()
     {
-        if (!method_exists(GEOSWKTWriter::class, 'setOutputDimension')) {
+        if (!method_exists("GEOSWKTWriter", 'setOutputDimension')) {
             return;
         }
 
@@ -164,7 +164,7 @@ class WKTWriterTest extends GEOSTest
 
     public function testWKTWriter_setOld3D()
     {
-        if (!method_exists(GEOSWKTWriter::class, 'setOld3D')) {
+        if (!method_exists("GEOSWKTWriter", 'setOld3D')) {
             return;
         }
 
