@@ -2969,7 +2969,7 @@ PHP_METHOD(WKBReader, read)
     }
 
 #if PHP_VERSION_ID >= 70000
-    wkblen = strlen(ZSTR_VAL(wkb));
+    wkblen = ZSTR_LEN(wkb);
 #endif
 
     geom = GEOSWKBReader_read_r(GEOS_G(handle), reader, (unsigned char*)ZSTR_VAL(wkb), wkblen);
