@@ -2,6 +2,7 @@
 pipeline:
   build:
     image: docker.kbt.io/php-geos/build-test:trisquel
+    pull: true
     commands:
       - export PATH=${PHP_BIN}:${PATH}
       - php --version
@@ -11,6 +12,7 @@ pipeline:
       - make check
 matrix:
   PHP_BIN:
-    - /opt/php-7.0.7/bin/
-    - /usr/bin/ # this is php5.5.9
     - /opt/php-5.5.38/bin/
+    - /opt/php-5.6.28/bin/
+    - /opt/php-7.0.13/bin/
+    - /opt/php-7.1.0/bin/
