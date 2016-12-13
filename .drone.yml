@@ -12,4 +12,5 @@ pipeline:
 matrix:
   PHP_BIN:
     - /opt/php-7.0.7/bin/
-    - /usr/bin/ # this is php5
+    - /usr/bin/ # this is php5.5.9
+    - /opt/php-5.5.38/bin/

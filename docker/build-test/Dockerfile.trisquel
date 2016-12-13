@@ -10,3 +10,15 @@ RUN cd php-7.0.7 && \
     ./configure --prefix=/opt/php-7.0.7 --enable-debug && \
     make install
 RUN cd .. && rm -rf php-7.0.7*
+RUN strip /opt/php-7.0.7/bin/php
+RUN rm /opt/php-7.0.7/bin/php-cgi
+
+RUN curl -so php-5.5.38.tar.bz2 http://it2.php.net/distributions/php-5.5.38.tar.bz2
+RUN tar xjf php-5.5.38.tar.bz2
+RUN apt-get update -qq && apt-get install -y libxml2-dev
+RUN cd php-5.5.38 && \
+    ./configure --prefix=/opt/php-5.5.38 --enable-debug && \
+    make install
+RUN cd .. && rm -rf php-5.5.38*
+RUN strip /opt/php-5.5.38/bin/php
+RUN rm /opt/php-5.5.38/bin/php-cgi
