@@ -18,6 +18,7 @@ RUN tar xjf php-5.4.9.tar.bz2
 RUN cd php-5.4.9 && \
     ./configure --prefix=/opt/php-5.4.9 \
       --enable-debug \
+      --disable-all \
       --disable-cgi \
       --disable-dom \
       --disable-libxml \
@@ -37,6 +38,7 @@ RUN tar xjf php-5.5.38.tar.bz2
 RUN cd php-5.5.38 && \
     ./configure --prefix=/opt/php-5.5.38 \
       --enable-debug \
+      --disable-all \
       --disable-cgi \
       --disable-dom \
       --disable-libxml \
@@ -56,6 +58,7 @@ RUN tar xjf php-5.6.28.tar.bz2
 RUN cd php-5.6.28 && \
     ./configure --prefix=/opt/php-5.6.28 \
       --enable-debug \
+      --disable-all \
       --disable-cgi \
       --disable-dom \
       --disable-libxml \
@@ -75,6 +78,7 @@ RUN tar xjf php-7.0.13.tar.bz2
 RUN cd php-7.0.13 && \
     ./configure --prefix=/opt/php-7.0.13 \
       --enable-debug \
+      --disable-all \
       --disable-cgi \
       --disable-dom \
       --disable-libxml \
@@ -95,6 +99,7 @@ RUN tar xjf php-7.1.0.tar.bz2
 RUN cd php-7.1.0 && \
     ./configure --prefix=/opt/php-7.1.0 \
       --enable-debug \
+      --disable-all \
       --disable-cgi \
       --disable-dom \
       --disable-libxml \

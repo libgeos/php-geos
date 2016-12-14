@@ -4,7 +4,7 @@ pipeline:
     image: docker.kbt.io/php-geos/build-test:trisquel
     pull: true
     commands:
-      - export PATH=${PHP_BIN}:${PATH}
+      - export PATH=${PHP_BIN}:${GEOS_BIN}:${PATH}
       - php --version
       - ./autogen.sh
       - ./configure
@@ -17,3 +17,7 @@ matrix:
     - /opt/php-5.6.28/bin/
     - /opt/php-7.0.13/bin/
     - /opt/php-7.1.0/bin/
+  GEOS_BIN:
+    - /opt/geos-3.4.3/bin/
+    - /opt/geos-3.5.1/bin/
+    - /opt/geos-3.6.0/bin/
