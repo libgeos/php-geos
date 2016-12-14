@@ -9,7 +9,6 @@ RUN apt-get update -qq && apt-get install -y \
 RUN curl -so php-5.4.9.tar.bz2 \
     http://museum.php.net/php5/php-5.4.9.tar.bz2
 RUN tar xjf php-5.4.9.tar.bz2
-RUN apt-get update -qq && apt-get install -y libxml2-dev
 RUN cd php-5.4.9 && \
     ./configure --prefix=/opt/php-5.4.9 \
       --enable-debug \
@@ -29,7 +28,6 @@ RUN strip /opt/php-5.4.9/bin/php
 RUN curl -so php-5.5.38.tar.bz2 \
     http://www.php.net/distributions/php-5.5.38.tar.bz2
 RUN tar xjf php-5.5.38.tar.bz2
-RUN apt-get update -qq && apt-get install -y libxml2-dev
 RUN cd php-5.5.38 && \
     ./configure --prefix=/opt/php-5.5.38 \
       --enable-debug \
@@ -49,7 +47,6 @@ RUN strip /opt/php-5.5.38/bin/php
 RUN curl -so php-5.6.28.tar.bz2 \
     http://www.php.net/distributions/php-5.6.28.tar.bz2
 RUN tar xjf php-5.6.28.tar.bz2
-RUN apt-get update -qq && apt-get install -y libxml2-dev
 RUN cd php-5.6.28 && \
     ./configure --prefix=/opt/php-5.6.28 \
       --enable-debug \
