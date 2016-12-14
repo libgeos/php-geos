@@ -22,12 +22,7 @@ if test "$PHP_GEOS" != "no"; then
       GEOS_CONFIG="$PHP_GEOS_CONFIG"
     fi
   else
-    for i in /opt/local/bin /opt/bin /usr/local/bin /usr/bin ""; do
-      if test -x $i/geos-config; then
-        GEOS_CONFIG="$i/geos-config"
-        break;
-      fi
-    done
+    AC_PATH_PROG(GEOS_CONFIG, geos-config)
   fi
 
   if test -n "$GEOS_CONFIG"; then
@@ -91,7 +86,7 @@ if test "$PHP_GEOS" != "no"; then
   AC_TRY_COMPILE(geos_c.h, GEOS_PREC_KEEP_COLLAPSED, AC_DEFINE(HAVE_GEOS_PREC_KEEP_COLLAPSED,1,[Whether we have GEOS_PREC_KEEP_COLLAPSED]))
 
   CFLAGS=$old_CFLAGS
-  LDFLAGS=$old_LDFLAGS
+  dnl LDFLAGS=$old_LDFLAGS
 
   PHP_ADD_LIBRARY(geos_c, 1, GEOS_SHARED_LIBADD)
   PHP_ADD_MAKEFILE_FRAGMENT(Makefile.frag)
