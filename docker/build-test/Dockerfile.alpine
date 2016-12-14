@@ -117,5 +117,27 @@ RUN cd geos-3.4.3 && \
     ./configure --prefix=/opt/geos-3.4.3 \
       --disable-swig \
       --disable-static \
-    && make install
+    && make install-strip
 RUN cd .. && rm -rf geos-3.4.3*
+
+# GEOS-3.5.1
+RUN curl -so geos-3.5.1.tar.bz2 \
+    http://download.osgeo.org/geos/geos-3.5.1.tar.bz2
+RUN tar xjf geos-3.5.1.tar.bz2
+RUN cd geos-3.5.1 && \
+    ./configure --prefix=/opt/geos-3.5.1 \
+      --disable-swig \
+      --disable-static \
+    && make install-strip
+RUN cd .. && rm -rf geos-3.5.1*
+
+# GEOS-3.6.0
+RUN curl -so geos-3.6.0.tar.bz2 \
+    http://download.osgeo.org/geos/geos-3.6.0.tar.bz2
+RUN tar xjf geos-3.6.0.tar.bz2
+RUN cd geos-3.6.0 && \
+    ./configure --prefix=/opt/geos-3.6.0 \
+      --disable-swig \
+      --disable-static \
+    && make install-strip
+RUN cd .. && rm -rf geos-3.6.0*
