@@ -6,7 +6,10 @@ pipeline:
     commands:
       - export PATH=${PHP_BIN}:${GEOS_BIN}:${PATH}
       - php --version
-      - ./autogen.sh
+      #  Always use newest phpize or we'll be hit by
+      #  false negatives on make check, see
+      #  https://git.osgeo.org/gogs/geos/php-geos/issues/16
+      - /opt/php-7.1.0/bin/phpize
       - ./configure
       - make
       - make check
