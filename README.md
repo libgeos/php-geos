@@ -2,8 +2,8 @@ PHP module for GEOS
 ===================
 
 [![build status]
-(https://drone.osgeo.kbt.io/api/badges/geos/php-geos/status.svg?branch=master)]
-(https://drone.osgeo.kbt.io/geos/php-geos?branch=master)
+(https://drone.osgeo.org/api/badges/geos/php-geos/status.svg?branch=master)]
+(https://drone.osgeo.org/geos/php-geos?branch=master)
 
 The code in this directory provides a PHP module to make use
 of functionalities of the [GEOS library] (http://geos.osgeo.org).
