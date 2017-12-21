@@ -24,7 +24,7 @@ You need:
 
 ## Procedure
 
-    git clone https://git.osgeo.org/gogs/geos/php-geos.git
+    git clone https://git.osgeo.org/gitea/geos/php-geos.git
     cd php-geos
     ./autogen.sh
     ./configure
