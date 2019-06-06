@@ -4,8 +4,8 @@ pipeline:
     image: docker.kbt.io/php-geos/build-test:trisquel
     pull: true
     commands:
-      - export PATH=${PHP_BIN}:${GEOS_BIN}:${PATH}
-      - echo ${PATH}
+      - export PATH=${PHP_BIN}:${GEOS_BIN}:$${PATH}
+      - echo $${PATH}
       - php --version
       #  Always use newest phpize or we'll be hit by
       #  false negatives on make check, see
