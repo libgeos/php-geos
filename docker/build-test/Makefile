@@ -1,6 +1,6 @@
 DOCKER=docker
-REGISTRY=docker.kbt.io
-NAME=$(REGISTRY)/php-geos/build-test
+REGISTRY=geos-docker.osgeo.org
+NAME=$(REGISTRY)/geos/php-build-test
 
 BUILDOPTS=--build-arg http_proxy=$${http_proxy}
 
