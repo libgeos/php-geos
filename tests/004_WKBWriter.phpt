@@ -139,7 +139,7 @@ class WKBWriterTest extends GEOSTest
             $writer->write(1);
             $this->assertTrue(false);
         } catch (ErrorException $e) {
-            $this->assertContains('expects parameter 1 to be object, integer given', $e->getMessage());
+            $this->assertContains('expects parameter 1 to be object, int', $e->getMessage());
         }
     }
 
@@ -151,7 +151,7 @@ class WKBWriterTest extends GEOSTest
             $writer->writeHEX(1);
             $this->assertTrue(false);
         } catch (ErrorException $e) {
-            $this->assertContains('expects parameter 1 to be object, integer given', $e->getMessage());
+            $this->assertContains('expects parameter 1 to be object, int', $e->getMessage());
         }
     }
 }
