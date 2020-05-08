@@ -189,11 +189,19 @@ getRelay(zval* val, zend_class_entry* ce) {
 
     if ( proxy->std.ce != ce ) {
         php_error_docref(NULL TSRMLS_CC, E_ERROR,
+#if PHP_VERSION_ID >= 70000
+            "Relay object is not an %s", ZSTR_VAL(ce->name));
+#else
             "Relay object is not an %s", ce->name);
+#endif
     }
     if ( ! proxy->relay ) {
-        php_error_docref(NULL TSRMLS_CC, E_ERROR,
+            php_error_docref(NULL TSRMLS_CC, E_ERROR,
+#if PHP_VERSION_ID >= 70000
+            "Relay object for object of type %s is not set", ZSTR_VAL(ce->name));
+#else
             "Relay object for object of type %s is not set", ce->name);
+#endif
     }
     return proxy->relay;
 }
