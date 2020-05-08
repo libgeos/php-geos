@@ -1,36 +1,35 @@
-PHP module for GEOS
+# PHP module for GEOS
+
 ===================
 
-[![build status]
-(https://drone.osgeo.org/api/badges/geos/php-geos/status.svg?branch=master)]
-(https://drone.osgeo.org/geos/php-geos?branch=master)
+[![build status](https://drone.osgeo.org/api/badges/geos/php-geos/status.svg?branch=master)](https://drone.osgeo.org/geos/php-geos?branch=master)
 
 The code in this directory provides a PHP module to make use
-of functionalities of the [GEOS library] (http://geos.osgeo.org).
+of functionalities of the [GEOS library](http://geos.osgeo.org).
 
 The bindings are linked to the C-API, for betters stability.
 
-# Building
+## Building
 
-## Requirements
+### Requirements
 
 You need:
 
-  - PHP development files
-    ( often found in packages named something like 'php5-dev' )
+- PHP development files
+  ( often found in packages named something like 'php5-dev' )
 
-  - GEOS development files
-    ( often found in packages named something like 'libgeos-dev' )
+- GEOS development files
+  ( often found in packages named something like 'libgeos-dev' )
 
-## Procedure
+### Procedure
 
-    git clone https://git.osgeo.org/gitea/geos/php-geos.git
+    git clone https://github.com/libgeos/php-geos.git
     cd php-geos
     ./autogen.sh
     ./configure
     make # generates modules/geos.so
 
-# Testing
+## Testing
 
 Automated testing is executed on 'make check'.
 
@@ -38,15 +37,14 @@ You'll need phpunit installed for this to work. To install:
 
     pear install --force --alldeps phpunit/phpunit
 
-# Installing
+## Installing
 
 As root (or owner with write access to the directory
 returned by php-config --extension-dir), run:
 
     make install
 
-# Using
+## Using
 
  ... TODO ...
  (reference some automatically built doc?)
-
