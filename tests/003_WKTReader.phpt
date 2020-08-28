@@ -99,6 +99,8 @@ class WKTReaderTest extends GEOSTest
         } catch (Exception $e) {
             $this->assertContains('expects exactly 1 parameter',
                                   $e->getMessage());
+        } catch (Error $e) {
+            $this->assertContains('expects exactly 1 parameter', $e->getMessage());
         }
     }
 }

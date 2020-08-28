@@ -25,6 +25,8 @@ class WKTWriterTest extends GEOSTest
             $this->assertTrue(FALSE); # this is just to fail if we get here
         } catch (Exception $e) {
             $this->assertContains('expects parameter 1', $e->getMessage());
+        } catch (Error $e) {
+            $this->assertContains('Argument #1', $e->getMessage());
         }
 
         $g = $reader->read('POINT(6 7)');

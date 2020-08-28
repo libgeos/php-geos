@@ -48,6 +48,15 @@ extern zend_module_entry geos_module_entry;
 #define GEOS_G(v) (geos_globals.v)
 #endif
 
+/* for PHP 8 */
+#ifndef TSRMLS_D
+#define TSRMLS_D void
+#define TSRMLS_DC
+#define TSRMLS_C
+#define TSRMLS_CC
+#define TSRMLS_FETCH()
+#endif
+
 ZEND_BEGIN_MODULE_GLOBALS(geos)
 GEOSContextHandle_t handle;
 ZEND_END_MODULE_GLOBALS(geos)
