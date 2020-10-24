@@ -1,0 +1,20 @@
+// vim:ft=javascript
+
+ARG_WITH("geos", "geos support", "yes");
+
+if (PHP_GEOS != "no") {
+    if (CHECK_LIB("geos_c.lib", "geos", PHP_GEOS) &&
+        CHECK_HEADER_ADD_INCLUDE("geos_c.h", "CFLAGS_GEOS", PHP_GEOS)) {
+
+        EXTENSION("geos", "geos.c", 1);
+        geos_c = "geos_c.lib";
+
+        CHECK_LIB(geos_c, "initGEOS_r", PHP_GEOS) && !PHP_GEOS && WARNING("Unable to build the GEOS: a newer libgeos is required");
+
+
+    } else {
+        WARNING("geos support can't be enabled, libraries or headers are missing")
+        PHP_GEOS = "no";
+    }
+
+}
