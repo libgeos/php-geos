@@ -11,6 +11,37 @@ if (PHP_GEOS != "no") {
 
         CHECK_LIB(geos_c, "initGEOS_r", PHP_GEOS) && !PHP_GEOS && WARNING("Unable to build the GEOS: a newer libgeos is required");
 
+        CHECK_LIB(geos_c, "GEOSClipByRect_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_CLIP_BY_RECT', 1, 'Whether we have GEOSClipByRect_r');
+        CHECK_LIB(geos_c, "GEOSCoveredBy_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_COVERED_BY', 1, 'Whether we have GEOSCoveredBy_r');
+        CHECK_LIB(geos_c, "GEOSCovers_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_COVERS', 1, 'Whether we have GEOSCovers_r');
+        CHECK_LIB(geos_c, "GEOSDelaunayTriangulation_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_DELAUNAY_TRIANGULATION', 1, 'Whether we have GEOSDelaunayTriangulation_r');
+        CHECK_LIB(geos_c, "GEOSGeomGetEndPoint_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_GET_END_POINT', 1, 'Whether we have GEOSGeomGetEndPoint_r');
+        CHECK_LIB(geos_c, "GEOSGeomGetNumPoints_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_GET_NUM_POINTS', 1, 'Whether we have GEOSGeomGetNumPoints_r');
+        CHECK_LIB(geos_c, "GEOSGeomGetPointN_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_GET_POINT_N', 1, 'Whether we have GEOSGeomGetPointN_r');
+        CHECK_LIB(geos_c, "GEOSGeomGetStartPoint_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_GET_START_POINT', 1, 'Whether we have GEOSGeomGetStartPoint_r');
+        CHECK_LIB(geos_c, "GEOSGeomGetX_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_GET_X', 1, 'Whether we have GEOSGeomGetX_r');
+        CHECK_LIB(geos_c, "GEOSGeomGetY_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_GET_Y', 1, 'Whether we have GEOSGeomGetY_r');
+        CHECK_LIB(geos_c, "GEOSGeom_extractUniquePoints_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_EXTRACT_UNIQUE_POINTS', 1, 'Whether we have GEOSGeom_extractUniquePoints_r');
+        CHECK_LIB(geos_c, "GEOSGeom_getCoordinateDimension_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_GET_COORDINATE_DIMENSION', 1, 'Whether we have GEOSGeom_getCoordinateDimension_r');
+        CHECK_LIB(geos_c, "GEOSNode_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_NODE', 1, 'Whether we have GEOSNode_r');
+        CHECK_LIB(geos_c, "GEOSOffsetCurve_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_OFFSET_CURVE', 1, 'Whether we have GEOSOffsetCurve_r');
+        CHECK_LIB(geos_c, "GEOSPolygonize_full_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_POLYGONIZE_FULL', 1, 'Whether we have GEOSPolygonize_full_r');
+        CHECK_LIB(geos_c, "GEOSRelateBoundaryNodeRule_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_RELATE_BOUNDARY_NODE_RULE', 1, 'Whether we have GEOSRelateBoundaryNodeRule_r');
+        CHECK_LIB(geos_c, "GEOSRelatePatternMatch_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_RELATE_PATTERN_MATCH', 1, 'Whether we have GEOSRelatePatternMatch_r');
+        CHECK_LIB(geos_c, "GEOSSharedPaths_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_SHARED_PATHS', 1, 'Whether we have GEOSSharedPaths_r');
+        CHECK_LIB(geos_c, "GEOSSnap_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_SNAP', 1, 'Whether we have GEOSSnap_r');
+        CHECK_LIB(geos_c, "GEOSUnaryUnion_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_UNARY_UNION', 1, 'Whether we have GEOSUnaryUnion_r');
+        CHECK_LIB(geos_c, "GEOSVoronoiDiagram_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_VORONOI_DIAGRAM', 1, 'Whether we have GEOSVoronoiDiagram_r');
+        CHECK_LIB(geos_c, "GEOSisClosed_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_IS_CLOSED', 1, 'Whether we have GEOSisClosed_r');
+        CHECK_LIB(geos_c, "GEOSisValidDetail_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_IS_VALID_DETAIL', 1, 'Whether we have GEOSisValidDetail_r');
+        CHECK_LIB(geos_c, "GEOSGeom_setPrecision_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_SET_PRECISION', 1, 'Whether we have GEOSGeom_setPrecision_r');
+        CHECK_LIB(geos_c, "GEOSGeom_getPrecision_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_GET_PRECISION', 1, 'Whether we have GEOSGeom_getPrecision_r');
+
+        CHECK_LIB(geos_c, "GEOSWKTWriter_setTrim_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_WKT_WRITER_SET_TRIM', 1, 'Whether we have GEOSWKTWriter_setTrim_r');
+        CHECK_LIB(geos_c, "GEOSWKTWriter_setRoundingPrecision_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_WKT_WRITER_SET_ROUNDING_PRECISION', 1, 'Whether we have GEOSWKTWriter_setRoundingPrecision_r');
+        CHECK_LIB(geos_c, "GEOSWKTWriter_setOutputDimension_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_WKT_WRITER_SET_OUTPUT_DIMENSION', 1, 'Whether we have GEOSWKTWriter_setOutputDimension_r');
+        CHECK_LIB(geos_c, "GEOSWKTWriter_getOutputDimension_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_WKT_WRITER_GET_OUTPUT_DIMENSION', 1, 'Whether we have GEOSWKTWriter_getOutputDimension_r');
+        CHECK_LIB(geos_c, "GEOSWKTWriter_setOld3D_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_WKT_WRITER_SET_OLD_3D', 1, 'Whether we have GEOSWKTWriter_setOld3D_r');
 
     } else {
         WARNING("geos support can't be enabled, libraries or headers are missing")
