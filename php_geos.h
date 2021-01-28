@@ -26,7 +26,7 @@
 #define PHP_GEOS_H
 
 /* TODO: generate from ./configure ? */
-#define PHP_GEOS_VERSION "0.0"
+#define PHP_GEOS_VERSION "1.0.1"
 #define PHP_GEOS_EXTNAME "geos"
 
 #ifdef HAVE_CONFIG_H

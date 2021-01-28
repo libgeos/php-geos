@@ -1,0 +1,59 @@
+// vim:ft=javascript
+
+ARG_WITH("geos", "geos support", "yes");
+
+if (PHP_GEOS != "no") {
+    if (CHECK_LIB("geos_c.lib", "geos", PHP_GEOS) &&
+        CHECK_HEADER_ADD_INCLUDE("geos_c.h", "CFLAGS_GEOS", PHP_GEOS)) {
+
+        CHECK_LIB("geos_c.lib", "initGEOS_r", PHP_GEOS) && !PHP_GEOS && WARNING("Unable to build the GEOS: a newer libgeos is required");
+
+        CHECK_LIB("geos_c.lib", "GEOSClipByRect_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_CLIP_BY_RECT', 1, 'Whether we have GEOSClipByRect_r');
+        CHECK_LIB("geos_c.lib", "GEOSCoveredBy_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_COVERED_BY', 1, 'Whether we have GEOSCoveredBy_r');
+        CHECK_LIB("geos_c.lib", "GEOSCovers_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_COVERS', 1, 'Whether we have GEOSCovers_r');
+        CHECK_LIB("geos_c.lib", "GEOSDelaunayTriangulation_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_DELAUNAY_TRIANGULATION', 1, 'Whether we have GEOSDelaunayTriangulation_r');
+        CHECK_LIB("geos_c.lib", "GEOSGeomGetEndPoint_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_GET_END_POINT', 1, 'Whether we have GEOSGeomGetEndPoint_r');
+        CHECK_LIB("geos_c.lib", "GEOSGeomGetNumPoints_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_GET_NUM_POINTS', 1, 'Whether we have GEOSGeomGetNumPoints_r');
+        CHECK_LIB("geos_c.lib", "GEOSGeomGetPointN_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_GET_POINT_N', 1, 'Whether we have GEOSGeomGetPointN_r');
+        CHECK_LIB("geos_c.lib", "GEOSGeomGetStartPoint_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_GET_START_POINT', 1, 'Whether we have GEOSGeomGetStartPoint_r');
+        CHECK_LIB("geos_c.lib", "GEOSGeomGetX_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_GET_X', 1, 'Whether we have GEOSGeomGetX_r');
+        CHECK_LIB("geos_c.lib", "GEOSGeomGetY_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_GET_Y', 1, 'Whether we have GEOSGeomGetY_r');
+        CHECK_LIB("geos_c.lib", "GEOSGeom_extractUniquePoints_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_EXTRACT_UNIQUE_POINTS', 1, 'Whether we have GEOSGeom_extractUniquePoints_r');
+        CHECK_LIB("geos_c.lib", "GEOSGeom_getCoordinateDimension_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_GET_COORDINATE_DIMENSION', 1, 'Whether we have GEOSGeom_getCoordinateDimension_r');
+        CHECK_LIB("geos_c.lib", "GEOSNode_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_NODE', 1, 'Whether we have GEOSNode_r');
+        CHECK_LIB("geos_c.lib", "GEOSOffsetCurve_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_OFFSET_CURVE', 1, 'Whether we have GEOSOffsetCurve_r');
+        CHECK_LIB("geos_c.lib", "GEOSPolygonize_full_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_POLYGONIZE_FULL', 1, 'Whether we have GEOSPolygonize_full_r');
+        CHECK_LIB("geos_c.lib", "GEOSRelateBoundaryNodeRule_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_RELATE_BOUNDARY_NODE_RULE', 1, 'Whether we have GEOSRelateBoundaryNodeRule_r');
+        CHECK_LIB("geos_c.lib", "GEOSRelatePatternMatch_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_RELATE_PATTERN_MATCH', 1, 'Whether we have GEOSRelatePatternMatch_r');
+        CHECK_LIB("geos_c.lib", "GEOSSharedPaths_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_SHARED_PATHS', 1, 'Whether we have GEOSSharedPaths_r');
+        CHECK_LIB("geos_c.lib", "GEOSSnap_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_SNAP', 1, 'Whether we have GEOSSnap_r');
+        CHECK_LIB("geos_c.lib", "GEOSUnaryUnion_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_UNARY_UNION', 1, 'Whether we have GEOSUnaryUnion_r');
+        CHECK_LIB("geos_c.lib", "GEOSVoronoiDiagram_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_VORONOI_DIAGRAM', 1, 'Whether we have GEOSVoronoiDiagram_r');
+        CHECK_LIB("geos_c.lib", "GEOSisClosed_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_IS_CLOSED', 1, 'Whether we have GEOSisClosed_r');
+        CHECK_LIB("geos_c.lib", "GEOSisValidDetail_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_IS_VALID_DETAIL', 1, 'Whether we have GEOSisValidDetail_r');
+        CHECK_LIB("geos_c.lib", "GEOSGeom_setPrecision_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_SET_PRECISION', 1, 'Whether we have GEOSGeom_setPrecision_r');
+        CHECK_LIB("geos_c.lib", "GEOSGeom_getPrecision_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_GEOM_GET_PRECISION', 1, 'Whether we have GEOSGeom_getPrecision_r');
+
+        CHECK_LIB("geos_c.lib", "GEOSWKTWriter_setTrim_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_WKT_WRITER_SET_TRIM', 1, 'Whether we have GEOSWKTWriter_setTrim_r');
+        CHECK_LIB("geos_c.lib", "GEOSWKTWriter_setRoundingPrecision_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_WKT_WRITER_SET_ROUNDING_PRECISION', 1, 'Whether we have GEOSWKTWriter_setRoundingPrecision_r');
+        CHECK_LIB("geos_c.lib", "GEOSWKTWriter_setOutputDimension_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_WKT_WRITER_SET_OUTPUT_DIMENSION', 1, 'Whether we have GEOSWKTWriter_setOutputDimension_r');
+        CHECK_LIB("geos_c.lib", "GEOSWKTWriter_getOutputDimension_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_WKT_WRITER_GET_OUTPUT_DIMENSION', 1, 'Whether we have GEOSWKTWriter_getOutputDimension_r');
+        CHECK_LIB("geos_c.lib", "GEOSWKTWriter_setOld3D_r", PHP_GEOS) && AC_DEFINE('HAVE_GEOS_WKT_WRITER_SET_OLD_3D', 1, 'Whether we have GEOSWKTWriter_setOld3D_r');
+
+	// https://juliahub.com/docs/LibGEOS/we91k/0.6.5/autodocs/	
+	//	setPrecision: GEOS_PREC_NO_TOPO -- do not attempt at preserving the topology -- geos.c l. 3379
+	//	setPrecision: GEOS_PREC_KEEP_COLLAPSED -- retain collapsed elements -- geos.c l. 3384
+	// We can't run TRY_COMPILE tests on Windows ?? force HAVE_GEOS_PREC_NO_TOPO & HAVE_GEOS_PREC_KEEP_COLLAPSED 
+	//	  AC_TRY_COMPILE(geos_c.h, GEOS_PREC_NO_TOPO, AC_DEFINE(HAVE_GEOS_PREC_NO_TOPO,1,[Whether we have GEOS_PREC_NO_TOPO])) -- do not attempt at preserving the topology
+	//	  AC_TRY_COMPILE(geos_c.h, GEOS_PREC_KEEP_COLLAPSED, AC_DEFINE(HAVE_GEOS_PREC_KEEP_COLLAPSED,1,[Whether we have GEOS_PREC_KEEP_COLLAPSED])) -- retain collapsed elements
+	AC_DEFINE('HAVE_GEOS_PREC_NO_TOPO',1,'Whether we have GEOS_PREC_NO_TOPO');
+	AC_DEFINE('HAVE_GEOS_PREC_KEEP_COLLAPSED',1,'Whether we have GEOS_PREC_KEEP_COLLAPSED');
+
+        EXTENSION("geos", "geos.c", 1);
+
+    } else {
+        WARNING("geos support can't be enabled, libraries or headers are missing")
+        PHP_GEOS = "no";
+    }
+
+}
