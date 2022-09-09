@@ -36,7 +36,12 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_Geometry_construct       arginfo_void
 
+#if PHP_VERSION_ID >= 80200
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_Geometry_toString, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO();
+#else
 #define arginfo_Geometry_toString        arginfo_void
+#endif
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_Geometry_project, 0, 0, 1)
     ZEND_ARG_INFO(0, geom)
