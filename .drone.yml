@@ -11,6 +11,7 @@ pipeline:
       #  false negatives on make check, see
       #  https://git.osgeo.org/gogs/geos/php-geos/issues/16
       - /opt/php-7.1.0/bin/phpize
+      #- /opt/php-8.1.10/bin/phpize # is this failing ?
       - ./configure
       - make
       - make check
@@ -21,6 +22,8 @@ matrix:
     - /opt/php-5.6.28/bin/
     - /opt/php-7.0.13/bin/
     - /opt/php-7.1.0/bin/
+    - /opt/php-7.4.30/bin/
+    - /opt/php-8.1.10/bin/
   GEOS_BIN:
     - /opt/geos-3.4.3/bin/
     - /opt/geos-3.5.1/bin/
