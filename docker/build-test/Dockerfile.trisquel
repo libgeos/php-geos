@@ -107,6 +107,48 @@ RUN cd .. && rm -rf php-7.1.0*
 RUN rm /opt/php-7.1.0/bin/phpdbg
 RUN strip /opt/php-7.1.0/bin/php
 
+# PHP-7.4.30
+RUN curl -sLo php-7.4.30.tar.bz2 \
+    http://www.php.net/distributions/php-7.4.30.tar.bz2
+RUN tar xjf php-7.4.30.tar.bz2
+RUN cd php-7.4.30 && \
+    ./configure --prefix=/opt/php-7.4.30 \
+      --enable-debug \
+      --disable-all \
+      --disable-cgi \
+      --disable-dom \
+      --disable-libxml \
+      --disable-simplexml \
+      --disable-xml \
+      --disable-xmlreader \
+      --disable-xmlwriter \
+      --without-pear && \
+    make install
+RUN cd .. && rm -rf php-7.4.30*
+RUN rm /opt/php-7.4.30/bin/phpdbg
+RUN strip /opt/php-7.4.30/bin/php
+
+# PHP-8.1.10
+RUN curl -sLo php-8.1.10.tar.bz2 \
+    http://www.php.net/distributions/php-8.1.10.tar.bz2
+RUN tar xjf php-8.1.10.tar.bz2
+RUN cd php-8.1.10 && \
+    ./configure --prefix=/opt/php-8.1.10 \
+      --enable-debug \
+      --disable-all \
+      --disable-cgi \
+      --disable-dom \
+      --disable-libxml \
+      --disable-simplexml \
+      --disable-xml \
+      --disable-xmlreader \
+      --disable-xmlwriter \
+      --without-pear && \
+    make install
+RUN cd .. && rm -rf php-8.1.10*
+RUN rm /opt/php-8.1.10/bin/phpdbg
+RUN strip /opt/php-8.1.10/bin/php
+
 
 # GEOS-3.4.3
 RUN curl -sLo geos-3.4.3.tar.bz2 \
