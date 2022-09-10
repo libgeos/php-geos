@@ -2,6 +2,7 @@ FROM kpengboy/trisquel
 RUN apt-get update -qq && apt-get install -y \
   autoconf \
   build-essential \
+  cmake \
   curl
 
 
@@ -182,3 +183,45 @@ RUN cd geos-3.6.0 && \
       --disable-static \
     && make install-strip
 RUN cd .. && rm -rf geos-3.6.0*
+
+# GEOS-3.7.5
+RUN curl -sLo geos-3.7.5.tar.bz2 \
+    http://download.osgeo.org/geos/geos-3.7.5.tar.bz2
+RUN tar xjf geos-3.7.5.tar.bz2
+RUN cd geos-3.7.5 && \
+    ./configure --prefix=/opt/geos-3.7.5 \
+      --disable-swig \
+      --disable-static \
+    && make install-strip
+RUN cd .. && rm -rf geos-3.7.5*
+
+# GEOS-3.8.3
+RUN curl -sLo geos-3.8.3.tar.bz2 \
+    http://download.osgeo.org/geos/geos-3.8.3.tar.bz2
+RUN tar xjf geos-3.8.3.tar.bz2
+RUN cd geos-3.8.3 && \
+    ./configure --prefix=/opt/geos-3.8.3 \
+      --disable-swig \
+      --disable-static \
+    && make install-strip
+RUN cd .. && rm -rf geos-3.8.3*
+
+# GEOS-3.9.3
+RUN curl -sLo geos-3.9.3.tar.bz2 \
+    http://download.osgeo.org/geos/geos-3.9.3.tar.bz2
+RUN tar xjf geos-3.9.3.tar.bz2
+RUN cd geos-3.9.3 && \
+    ./configure --prefix=/opt/geos-3.9.3 \
+      --disable-swig \
+      --disable-static \
+    && make install-strip
+RUN cd .. && rm -rf geos-3.9.3*
+
+# GEOS-3.10.3
+RUN curl -sLo geos-3.10.3.tar.bz2 \
+    http://download.osgeo.org/geos/geos-3.10.3.tar.bz2
+RUN tar xjf geos-3.10.3.tar.bz2
+RUN cd geos-3.10.3 && \
+    ./configure --prefix=/opt/geos-3.10.3 \
+    && make install
+RUN cd .. && rm -rf geos-3.10.3*
