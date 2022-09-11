@@ -10,7 +10,8 @@ pipeline:
       #  Always use newest phpize or we'll be hit by
       #  false negatives on make check, see
       #  https://git.osgeo.org/gogs/geos/php-geos/issues/16
-      - /opt/php-7.1.0/bin/phpize
+      #- /opt/php-7.1.0/bin/phpize
+      - /opt/php-7.4.30/bin/phpize
       #- /opt/php-8.1.10/bin/phpize # is this failing ?
       - ./configure
       - make
