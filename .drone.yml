@@ -18,10 +18,6 @@ pipeline:
       - make check
 matrix:
   PHP_BIN:
-    - /opt/php-5.4.9/bin/
-    - /opt/php-5.5.38/bin/
-    - /opt/php-5.6.28/bin/
-    - /opt/php-7.0.13/bin/
     - /opt/php-7.1.0/bin/
     - /opt/php-7.4.30/bin/
     - /opt/php-8.1.10/bin/
