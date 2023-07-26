@@ -3,6 +3,7 @@
 *.lo
 *.la
 .deps
+*.dep
 .libs
 Makefile
 Makefile.fragments
