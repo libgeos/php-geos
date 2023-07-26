@@ -15,6 +15,9 @@ class WKBReaderTest extends GEOSTest
         $writer = new GEOSWKTWriter();
         $writer->setRoundingPrecision(1);
         $writer->setOutputDimension(3);
+        if (method_exists("GEOSWKTWriter", 'setTrim')) {
+            $writer->setTrim(FALSE);
+        }
 
         foreach ($this->providerValidWKB() as $test) {
             list ($wkb, $wkt, $srid) = $test;
