@@ -97,6 +97,17 @@ class GEOSTest
         }
     }
 
+    public function assertEqualsAny($expectedValues, $actual)
+    {
+        foreach ($expectedValues as $expected) {
+            if ($actual == $expected) {
+                // If a match is found, return early without throwing an exception
+                return;
+            }
+        }
+        throw new Exception("Expected '{$expected}' to contain '{$actual}'.");
+    }
+
     public function assertNull($actual)
     {
         if (!is_null($actual)) {
