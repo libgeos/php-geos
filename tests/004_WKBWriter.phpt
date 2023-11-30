@@ -19,7 +19,7 @@ class WKBWriterTest extends GEOSTest
     public function testWKBWriter_getOutputDimension()
     {
         $writer = new GEOSWKBWriter();
-        $this->assertEquals( GEOS_CHANGE_DIMENSION ? 4 : 2, $writer->getOutputDimension());
+        $this->assertEquals(GEOS_WKB_DEFAULT_DIMENSIONS, $writer->getOutputDimension());
     }
 
     public function testWKBWriter_setOutputDimension()
@@ -35,7 +35,7 @@ class WKBWriterTest extends GEOSTest
             $writer->setOutputDimension(1);
             $this->assertTrue(FALSE);
         } catch (Exception $e) {
-            $this->assertContains(GEOS_CHANGE_DIMENSION ? 'must be 2, 3, or 4' : 'must be 2 or 3' , $e->getMessage());
+            $this->assertContains((GEOS_WKB_DEFAULT_DIMENSIONS === 4) ? 'must be 2, 3, or 4' : 'must be 2 or 3' , $e->getMessage());
         }
 
         # 4 is invalid
