@@ -102,6 +102,7 @@ class WKTWriterTest extends GEOSTest
         $this->assertEquals('POINT (6.123456 7.123456)',
             $writer->write($g));
 
+        $writer->setTrim(FALSE); //resets trim to false for GEOS 3.7.1 or older, see: GH-915
         $writer->setRoundingPrecision(2);
         $this->assertEquals('POINT (6.12 7.12)', $writer->write($g));
 
@@ -123,7 +124,7 @@ class WKTWriterTest extends GEOSTest
         }
 
         $writer = new GEOSWKTWriter();
-        $this->assertEquals(GEOS_CHANGE_DIMENSION ? 4 : 2, $writer->getOutputDimension());
+        $this->assertEquals(GEOS_WKB_DEFAULT_DIMENSIONS, $writer->getOutputDimension());
     }
 
     public function testWKTWriter_setOutputDimension()
@@ -140,7 +141,7 @@ class WKTWriterTest extends GEOSTest
         $writer->setTrim(TRUE);
 
         # Only 2d by default
-        $this->assertEquals(GEOS_CHANGE_DIMENSION ? 'POINT Z (1 2 3)' : 'POINT (1 2)', $writer->write($g3d)); //Dimension up to 3 since GEOS 3.12
+        $this->assertEquals((GEOS_WKB_DEFAULT_DIMENSIONS === 4) ? 'POINT Z (1 2 3)' : 'POINT (1 2)', $writer->write($g3d)); 
 
         # 3d if requested _and_ available
         $writer->setOutputDimension(3);
@@ -152,7 +153,7 @@ class WKTWriterTest extends GEOSTest
             $writer->setOutputDimension(1);
             $this->assertTrue(FALSE);
         } catch (Exception $e) {
-            $this->assertContains(GEOS_CHANGE_DIMENSION ? 'must be 2, 3, or 4' : '2 or 3', $e->getMessage());
+            $this->assertContains((GEOS_WKB_DEFAULT_DIMENSIONS === 4) ? 'must be 2, 3, or 4' : '2 or 3', $e->getMessage());
         }
 
         # 4 is invalid
