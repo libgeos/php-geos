@@ -6,7 +6,7 @@ WKTWriter tests
 <?php
 
 require './tests/TestHelper.php';
-include './tests/geos_version_test.php';
+require './tests/geos_version_test.php';
 
 class WKTWriterTest extends GEOSTest
 {
@@ -79,7 +79,7 @@ class WKTWriterTest extends GEOSTest
         $in[] = 'POLYGON EMPTY';
         $in[] = 'MULTIPOLYGON (((0 0, 1 0, 1 1, 0 1, 0 0)), ((10 10, 10 14, 14 14, 14 10, 10 10), (11 11, 11 12, 12 12, 12 11, 11 11)))';
         $in[] = 'MULTIPOLYGON EMPTY';
-        $in[] = GEOS_USE_BRACKETED_MULTIPOINT ? 'GEOMETRYCOLLECTION  (MULTIPOLYGON (((0 0, 1 0, 1 1, 0 1, 0 0)), ((10 10, 10 14, 14 14, 14 10, 10 10), (11 11, 11 12, 12 12, 12 11, 11 11))), POLYGON ((0 0, 1 0, 1 1, 0 1, 0 0)), MULTILINESTRING ((0 0, 2 3), (10 10, 3 4)), LINESTRING (0 0, 2 3), MULTIPOINT ((0 0), (2 3)), POINT (9 0))' : 'GEOMETRYCOLLECTION (MULTIPOLYGON (((0 0, 1 0, 1 1, 0 1, 0 0)), ((10 10, 10 14, 14 14, 14 10, 10 10), (11 11, 11 12, 12 12, 12 11, 11 11))), POLYGON ((0 0, 1 0, 1 1, 0 1, 0 0)), MULTILINESTRING ((0 0, 2 3), (10 10, 3 4)), LINESTRING (0 0, 2 3), MULTIPOINT (0 0, 2 3), POINT (9 0))' ;
+        $in[] = GEOS_USE_BRACKETED_MULTIPOINT ? 'GEOMETRYCOLLECTION (MULTIPOLYGON (((0 0, 1 0, 1 1, 0 1, 0 0)), ((10 10, 10 14, 14 14, 14 10, 10 10), (11 11, 11 12, 12 12, 12 11, 11 11))), POLYGON ((0 0, 1 0, 1 1, 0 1, 0 0)), MULTILINESTRING ((0 0, 2 3), (10 10, 3 4)), LINESTRING (0 0, 2 3), MULTIPOINT ((0 0), (2 3)), POINT (9 0))' : 'GEOMETRYCOLLECTION (MULTIPOLYGON (((0 0, 1 0, 1 1, 0 1, 0 0)), ((10 10, 10 14, 14 14, 14 10, 10 10), (11 11, 11 12, 12 12, 12 11, 11 11))), POLYGON ((0 0, 1 0, 1 1, 0 1, 0 0)), MULTILINESTRING ((0 0, 2 3), (10 10, 3 4)), LINESTRING (0 0, 2 3), MULTIPOINT (0 0, 2 3), POINT (9 0))' ;
         $in[] = 'GEOMETRYCOLLECTION EMPTY';
 
         foreach ($in as $i) {
@@ -140,7 +140,7 @@ class WKTWriterTest extends GEOSTest
         $writer = new GEOSWKTWriter();
         $writer->setTrim(TRUE);
 
-        # Only 2d by default
+        
         $this->assertEquals((GEOS_WKB_DEFAULT_DIMENSIONS === 4) ? 'POINT Z (1 2 3)' : 'POINT (1 2)', $writer->write($g3d)); 
 
         # 3d if requested _and_ available

@@ -6,7 +6,7 @@ WKBWriter tests
 <?php
 
 require './tests/TestHelper.php';
-include './tests/geos_version_test.php';
+require './tests/geos_version_test.php';
 
 class WKBWriterTest extends GEOSTest
 {

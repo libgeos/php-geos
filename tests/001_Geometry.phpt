@@ -6,7 +6,7 @@ Geometry tests
 <?php
 
 require './tests/TestHelper.php';
-include './tests/geos_version_test.php';
+require './tests/geos_version_test.php';
 class GeometryTest extends GEOSTest
 {
     public function testGeometry_serialization()

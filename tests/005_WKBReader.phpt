@@ -6,7 +6,7 @@ WKBReader tests
 <?php
 
 require './tests/TestHelper.php';
-include './tests/geos_version_test.php';
+require './tests/geos_version_test.php';
  
 class WKBReaderTest extends GEOSTest
 {
@@ -16,7 +16,6 @@ class WKBReaderTest extends GEOSTest
         $writer = new GEOSWKTWriter();
         $writer->setRoundingPrecision(1);
         $writer->setOutputDimension(3);
-
         if (method_exists("GEOSWKTWriter", 'setTrim')) {
             $writer->setTrim(FALSE);
         }
