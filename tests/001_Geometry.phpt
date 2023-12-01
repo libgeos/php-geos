@@ -265,7 +265,7 @@ class GeometryTest extends GEOSTest
             'quad_segs' => 2,
             'join' => GEOSBUF_JOIN_ROUND
         ));
-        $this->assertEquals(GEOS_CHANGE_VALUE ? 'LINESTRING (0 -10, 100 -10, 102 -10, 104 -9, 106 -8, 107 -7, 108 -6, 109 -4, 110 -2, 110 0, 110 100)' : GEOS_CORRECT_VALUE? 'LINESTRING (0 -10, 100 -10, 107 -7, 110 0, 110 100)' : 'LINESTRING (110 100, 110 0, 107 -7, 100 -10, 0 -10)' , $writer->write($b)); // Linestring changed twice first between 3.9 and 3.11 then 3.12.1
+        $this->assertEquals(GEOS_CHANGE_VALUE ? 'LINESTRING (0 -10, 100 -10, 102 -10, 104 -9, 106 -8, 107 -7, 108 -6, 109 -4, 110 -2, 110 0, 110 100)' : (GEOS_CORRECT_VALUE ? 'LINESTRING (0 -10, 100 -10, 107 -7, 110 0, 110 100)' : 'LINESTRING (110 100, 110 0, 107 -7, 100 -10, 0 -10)'), $writer->write($b)); // Linestring changed twice first between 3.9 and 3.11 then 3.12.1
 
         /* left, bevel join */
         $b = $g->offsetCurve(10, array(
