@@ -6,7 +6,7 @@ define('GEOS_WKB_DEFAULT_DIMENSIONS', version_compare(GEOS_VERSION, '3.12', '>='
 define('GEOS_CHANGE_VALUE', version_compare(GEOS_VERSION, '3.12', '>=')); 
 define('GEOS_CORRECT_NEGATIVE_ZERO', version_compare(GEOS_VERSION, '3.12', '>=')); // Update since 3.12.1 see: https://github.com/libgeos/geos/blob/ddba88a37bd8edb0acc08c9753a1a0e28de3baee/tests/unit/capi/GEOSEqualsIdenticalTest.cpp#L203
 define('GEOS_CORRECT_VALUE', version_compare(GEOS_VERSION, '3.11', '>=')); 
-define('GEOS_DEFAULT_EMPTY', version_compare(GEOS_VERSION, '3.11', '>=')); // The bad mix appears to be with GEOS 3.10 and POLYGON EMPTY GH-501
+define('GEOS_DEFAULT_EMPTY', version_compare(GEOS_VERSION, '3.9', '>=')); // The bad mix appears to be with GEOS 3.10 and POLYGON EMPTY GH-501
 //turn trim on(true), see : https://github.com/libgeos/geos/pull/915
 
 function getGeosVersion()
