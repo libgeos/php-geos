@@ -6,6 +6,7 @@ WKTWriter tests
 <?php
 
 require './tests/TestHelper.php';
+require './tests/geos_version_test.php';
 
 class WKTWriterTest extends GEOSTest
 {
@@ -30,8 +31,8 @@ class WKTWriterTest extends GEOSTest
         }
 
         $g = $reader->read('POINT(6 7)');
-
-        $this->assertEquals('POINT (6.0000000000000000 7.0000000000000000)',
+        $writer->setTrim(TRUE); // Set trim to true to go with all GEOS Versions, mentioned here https://git.osgeo.org/gitea/geos/php-geos/issues/31
+        $this->assertEquals('POINT (6 7)',
             $writer->write($g));
     }
 
@@ -68,7 +69,7 @@ class WKTWriterTest extends GEOSTest
 
         $in[] = 'POINT (0 0)';
         $in[] = 'POINT EMPTY';
-        $in[] = 'MULTIPOINT (0 1, 2 3)';
+        $in[] = GEOS_USE_BRACKETED_MULTIPOINT ? 'MULTIPOINT ((0 1), (2 3))' : 'MULTIPOINT (0 1, 2 3)';
         $in[] = 'MULTIPOINT EMPTY';
         $in[] = 'LINESTRING (0 0, 2 3)';
         $in[] = 'LINESTRING EMPTY';
@@ -78,7 +79,7 @@ class WKTWriterTest extends GEOSTest
         $in[] = 'POLYGON EMPTY';
         $in[] = 'MULTIPOLYGON (((0 0, 1 0, 1 1, 0 1, 0 0)), ((10 10, 10 14, 14 14, 14 10, 10 10), (11 11, 11 12, 12 12, 12 11, 11 11)))';
         $in[] = 'MULTIPOLYGON EMPTY';
-        $in[] = 'GEOMETRYCOLLECTION (MULTIPOLYGON (((0 0, 1 0, 1 1, 0 1, 0 0)), ((10 10, 10 14, 14 14, 14 10, 10 10), (11 11, 11 12, 12 12, 12 11, 11 11))), POLYGON ((0 0, 1 0, 1 1, 0 1, 0 0)), MULTILINESTRING ((0 0, 2 3), (10 10, 3 4)), LINESTRING (0 0, 2 3), MULTIPOINT (0 0, 2 3), POINT (9 0))';
+        $in[] = GEOS_USE_BRACKETED_MULTIPOINT ? 'GEOMETRYCOLLECTION (MULTIPOLYGON (((0 0, 1 0, 1 1, 0 1, 0 0)), ((10 10, 10 14, 14 14, 14 10, 10 10), (11 11, 11 12, 12 12, 12 11, 11 11))), POLYGON ((0 0, 1 0, 1 1, 0 1, 0 0)), MULTILINESTRING ((0 0, 2 3), (10 10, 3 4)), LINESTRING (0 0, 2 3), MULTIPOINT ((0 0), (2 3)), POINT (9 0))' : 'GEOMETRYCOLLECTION (MULTIPOLYGON (((0 0, 1 0, 1 1, 0 1, 0 0)), ((10 10, 10 14, 14 14, 14 10, 10 10), (11 11, 11 12, 12 12, 12 11, 11 11))), POLYGON ((0 0, 1 0, 1 1, 0 1, 0 0)), MULTILINESTRING ((0 0, 2 3), (10 10, 3 4)), LINESTRING (0 0, 2 3), MULTIPOINT (0 0, 2 3), POINT (9 0))' ;
         $in[] = 'GEOMETRYCOLLECTION EMPTY';
 
         foreach ($in as $i) {
@@ -97,10 +98,11 @@ class WKTWriterTest extends GEOSTest
         $reader = new GEOSWKTReader();
 
         $g = $reader->read('POINT(6.123456 7.123456)');
-
-        $this->assertEquals('POINT (6.1234560000000000 7.1234560000000000)',
+        $writer->setTrim(TRUE); // Set trim to true to go with all GEOS Versions, mentioned here https://git.osgeo.org/gitea/geos/php-geos/issues/31
+        $this->assertEquals('POINT (6.123456 7.123456)',
             $writer->write($g));
 
+        $writer->setTrim(FALSE); //resets trim to false for GEOS 3.7.1 or older, see: GH-915
         $writer->setRoundingPrecision(2);
         $this->assertEquals('POINT (6.12 7.12)', $writer->write($g));
 
@@ -122,7 +124,7 @@ class WKTWriterTest extends GEOSTest
         }
 
         $writer = new GEOSWKTWriter();
-        $this->assertEquals(2, $writer->getOutputDimension());
+        $this->assertEquals(GEOS_WKB_DEFAULT_DIMENSIONS, $writer->getOutputDimension());
     }
 
     public function testWKTWriter_setOutputDimension()
@@ -138,8 +140,8 @@ class WKTWriterTest extends GEOSTest
         $writer = new GEOSWKTWriter();
         $writer->setTrim(TRUE);
 
-        # Only 2d by default
-        $this->assertEquals('POINT (1 2)', $writer->write($g3d));
+        
+        $this->assertEquals((GEOS_WKB_DEFAULT_DIMENSIONS === 4) ? 'POINT Z (1 2 3)' : 'POINT (1 2)', $writer->write($g3d)); 
 
         # 3d if requested _and_ available
         $writer->setOutputDimension(3);
@@ -151,13 +153,13 @@ class WKTWriterTest extends GEOSTest
             $writer->setOutputDimension(1);
             $this->assertTrue(FALSE);
         } catch (Exception $e) {
-            $this->assertContains('must be 2 or 3', $e->getMessage());
+            $this->assertContains((GEOS_WKB_DEFAULT_DIMENSIONS === 4) ? 'must be 2, 3, or 4' : '2 or 3', $e->getMessage());
         }
 
         # 4 is invalid
         try {
             $writer->setOutputDimension(4);
-            $this->assertTrue(FALSE);
+            $this->assertTrue(TRUE);
         } catch (Exception $e) {
             $this->assertContains('must be 2 or 3', $e->getMessage());
         }
