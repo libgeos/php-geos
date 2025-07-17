@@ -146,7 +146,11 @@ static void errorHandler(const char *fmt, ...)
     va_end(args);
 
     /* TODO: use a GEOSException ? */
+#if PHP_VERSION_ID < 80000
     zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C),
+#else
+    zend_throw_exception_ex(zend_ce_exception,
+#endif
         1 TSRMLS_CC, "%s", message);
 
 }
