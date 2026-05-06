@@ -4,7 +4,7 @@ PHP module for GEOS
 [![status-badge](https://woodie.osgeo.org/api/badges/132/status.svg)](https://woodie.osgeo.org/repos/132)
 
 The code in this directory provides a PHP module to make use
-of functionalities of the [GEOS library] (http://geos.osgeo.org).
+of functionalities of the [GEOS library](https://libgeos.org).
 
 The bindings are linked to the C-API, for betters stability.
 
