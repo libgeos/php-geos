@@ -20,6 +20,9 @@ steps:
     image: docker.osgeo.org/geos/php-build-test:trisquel
     pull: true
     commands:
+      # See https://github.com/libgeos/geos/pull/1436
+      - export LD_LIBRARY_PATH=${GEOS_BIN}/../lib:$${LD_LIBRARY_PATH}
+      - echo $${LD_LIBRARY_PATH}
       - export PATH=${PHP_BIN}:${GEOS_BIN}:$${PATH}
       - echo $${PATH}
       - php --version
