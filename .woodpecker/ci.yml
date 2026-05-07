@@ -12,8 +12,8 @@ matrix:
     - /opt/php-7.1.0/bin/
   GEOS_BIN:
     - /opt/geos-3.4.3/bin/
-    - /opt/geos-3.5.1/bin/
-    - /opt/geos-3.6.0/bin/
+    - /opt/geos-3.5.2/bin/
+    - /opt/geos-3.6.6/bin/
 
 steps:
   - name: build
