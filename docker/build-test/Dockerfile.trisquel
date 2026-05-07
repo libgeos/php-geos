@@ -221,3 +221,39 @@ RUN cd geos-3.10.7 && \
     cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/geos-3.10.7 \
     && make install
 RUN cd .. && rm -rf geos-3.10.7*
+
+ARG GEOSVERSION=3.11.5
+RUN curl -sLo geos-${GEOSVERSION}.tar.bz2 \
+    http://download.osgeo.org/geos/geos-${GEOSVERSION}.tar.bz2
+RUN tar xjf geos-${GEOSVERSION}.tar.bz2
+RUN cd geos-${GEOSVERSION} && \
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/geos-${GEOSVERSION} \
+    && make install
+RUN cd .. && rm -rf geos-${GEOSVERSION}*
+
+ARG GEOSVERSION=3.12.3
+RUN curl -sLo geos-${GEOSVERSION}.tar.bz2 \
+    http://download.osgeo.org/geos/geos-${GEOSVERSION}.tar.bz2
+RUN tar xjf geos-${GEOSVERSION}.tar.bz2
+RUN cd geos-${GEOSVERSION} && \
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/geos-${GEOSVERSION} \
+    && make install
+RUN cd .. && rm -rf geos-${GEOSVERSION}*
+
+ARG GEOSVERSION=3.13.1
+RUN curl -sLo geos-${GEOSVERSION}.tar.bz2 \
+    http://download.osgeo.org/geos/geos-${GEOSVERSION}.tar.bz2
+RUN tar xjf geos-${GEOSVERSION}.tar.bz2
+RUN cd geos-${GEOSVERSION} && \
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/geos-${GEOSVERSION} \
+    && make install
+RUN cd .. && rm -rf geos-${GEOSVERSION}*
+
+ARG GEOSVERSION=3.14.1
+RUN curl -sLo geos-${GEOSVERSION}.tar.bz2 \
+    http://download.osgeo.org/geos/geos-${GEOSVERSION}.tar.bz2
+RUN tar xjf geos-${GEOSVERSION}.tar.bz2
+RUN cd geos-${GEOSVERSION} && \
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/geos-${GEOSVERSION} \
+    && make install
+RUN cd .. && rm -rf geos-${GEOSVERSION}*
