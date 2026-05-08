@@ -478,16 +478,28 @@ class GeometryTest extends GEOSTest
         $g = $reader->read('POLYGON((0 0, 10 0, 10 10, 0 10, 0 0))');
         $g2 = $reader->read('LINESTRING(5 -10, 5 10)');
         $gi = $g->difference($g2);
-        $this->assertEqualsAny(array('POLYGON ((0 0, 0 10, 5 10, 10 10, 10 0, 5 0, 0 0))', 'POLYGON ((0 10, 5 10, 10 10, 10 0, 5 0, 0 0, 0 10))', 'POLYGON ((5 0, 0 0, 0 10, 5 10, 10 10, 10 0, 5 0))'), $writer->write($gi)); //Polygon changed twice between 3.9 and 3.11
+        $this->assertEqualsAny(array(
+          'POLYGON ((0 0, 0 10, 5 10, 10 10, 10 0, 5 0, 0 0))',
+          'POLYGON ((0 10, 5 10, 10 10, 10 0, 5 0, 0 0, 0 10))',
+          'POLYGON ((5 0, 0 0, 0 10, 5 10, 10 10, 10 0, 5 0))'
+        ), $writer->write($gi)); //Polygon changed twice between 3.9 and 3.11
         $g2 = $reader->read('LINESTRING(10 0, 20 0)');
         $gi = $g->difference($g2);
-        $this->assertEqualsAny(array('POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))', 'POLYGON ((10 0, 0 0, 0 10, 10 10, 10 0))', 'POLYGON ((0 10, 10 10, 10 0, 0 0, 0 10))'), $writer->write($gi)); //Polygon changed between 3.9 and 3.11
+        $this->assertEqualsAny(array(
+          'POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))',
+          'POLYGON ((10 0, 0 0, 0 10, 10 10, 10 0))',
+          'POLYGON ((0 10, 10 10, 10 0, 0 0, 0 10))'
+        ), $writer->write($gi)); //Polygon changed between 3.9 and 3.11
 
         /* POLY - POLY */
         $g = $reader->read('POLYGON((0 0, 10 0, 10 10, 0 10, 0 0))');
         $g2 = $reader->read('POLYGON((5 -5, 5 5, 15 5, 15 -5, 5 -5))');
         $gi = $g->difference($g2);
-        $this->assertEqualsAny(array('POLYGON ((0 0, 0 10, 10 10, 10 5, 5 5, 5 0, 0 0))', 'POLYGON ((5 0, 0 0, 0 10, 10 10, 10 5, 5 5, 5 0))', 'POLYGON ((0 10, 10 10, 10 5, 5 5, 5 0, 0 0, 0 10))'), $writer->write($gi)); //Polygon changed between 3.9 and 3.11
+        $this->assertEqualsAny(array(
+          'POLYGON ((0 0, 0 10, 10 10, 10 5, 5 5, 5 0, 0 0))',
+          'POLYGON ((5 0, 0 0, 0 10, 10 10, 10 5, 5 5, 5 0))',
+          'POLYGON ((0 10, 10 10, 10 5, 5 5, 5 0, 0 0, 0 10))'
+        ), $writer->write($gi)); //Polygon changed between 3.9 and 3.11
     }
 
     public function testGeometry_symdifference()
@@ -540,16 +552,28 @@ class GeometryTest extends GEOSTest
         $g = $reader->read('POLYGON((0 0, 10 0, 10 10, 0 10, 0 0))');
         $g2 = $reader->read('LINESTRING(5 -10, 5 10)');
         $gi = $g->symDifference($g2);
-        $this->assertEqualsAny(array('GEOMETRYCOLLECTION (POLYGON ((0 0, 0 10, 5 10, 10 10, 10 0, 5 0, 0 0)), LINESTRING (5 -10, 5 0))', 'GEOMETRYCOLLECTION (LINESTRING (5 -10, 5 0), POLYGON ((5 0, 0 0, 0 10, 5 10, 10 10, 10 0, 5 0)))', 'GEOMETRYCOLLECTION (POLYGON ((0 10, 5 10, 10 10, 10 0, 5 0, 0 0, 0 10)), LINESTRING (5 -10, 5 0))'), $writer->write($gi->normalize())); // GeometryCollection changed twice between 3.9 and 3.11
+        $this->assertEqualsAny(array(
+          'GEOMETRYCOLLECTION (POLYGON ((0 0, 0 10, 5 10, 10 10, 10 0, 5 0, 0 0)), LINESTRING (5 -10, 5 0))',
+          'GEOMETRYCOLLECTION (LINESTRING (5 -10, 5 0), POLYGON ((5 0, 0 0, 0 10, 5 10, 10 10, 10 0, 5 0)))',
+          'GEOMETRYCOLLECTION (POLYGON ((0 10, 5 10, 10 10, 10 0, 5 0, 0 0, 0 10)), LINESTRING (5 -10, 5 0))'
+        ), $writer->write($gi->normalize())); // GeometryCollection changed twice between 3.9 and 3.11
         $g2 = $reader->read('LINESTRING(10 0, 20 0)');
         $gi = $g->symDifference($g2);
-        $this->assertEqualsAny(array('GEOMETRYCOLLECTION (POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0)), LINESTRING (10 0, 20 0))', 'GEOMETRYCOLLECTION (LINESTRING (10 0, 20 0), POLYGON ((10 0, 0 0, 0 10, 10 10, 10 0)))', 'GEOMETRYCOLLECTION (POLYGON ((0 10, 10 10, 10 0, 0 0, 0 10)), LINESTRING (10 0, 20 0))'), $writer->write($gi->normalize())); // GeometryCollection changed twice between 3.9 and 3.11
+        $this->assertEqualsAny(array(
+          'GEOMETRYCOLLECTION (POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0)), LINESTRING (10 0, 20 0))',
+          'GEOMETRYCOLLECTION (LINESTRING (10 0, 20 0), POLYGON ((10 0, 0 0, 0 10, 10 10, 10 0)))',
+          'GEOMETRYCOLLECTION (POLYGON ((0 10, 10 10, 10 0, 0 0, 0 10)), LINESTRING (10 0, 20 0))'
+        ), $writer->write($gi->normalize())); // GeometryCollection changed twice between 3.9 and 3.11
 
         /* POLY - POLY */
         $g = $reader->read('POLYGON((0 0, 10 0, 10 10, 0 10, 0 0))');
         $g2 = $reader->read('POLYGON((5 -5, 5 5, 15 5, 15 -5, 5 -5))');
         $gi = $g->symDifference($g2);
-        $this->assertEqualsAny(array('MULTIPOLYGON (((0 0, 0 10, 10 10, 10 5, 5 5, 5 0, 0 0)), ((10 0, 10 5, 15 5, 15 -5, 5 -5, 5 0, 10 0)))', 'MULTIPOLYGON (((5 0, 0 0, 0 10, 10 10, 10 5, 5 5, 5 0)), ((5 0, 10 0, 10 5, 15 5, 15 -5, 5 -5, 5 0)))', 'MULTIPOLYGON (((0 10, 10 10, 10 5, 5 5, 5 0, 0 0, 0 10)), ((5 0, 10 0, 10 5, 15 5, 15 -5, 5 -5, 5 0)))'), $writer->write($gi)); // GemoetryCollection changed twice between 3.9 and 3.11
+        $this->assertEqualsAny(array(
+          'MULTIPOLYGON (((0 0, 0 10, 10 10, 10 5, 5 5, 5 0, 0 0)), ((10 0, 10 5, 15 5, 15 -5, 5 -5, 5 0, 10 0)))',
+          'MULTIPOLYGON (((5 0, 0 0, 0 10, 10 10, 10 5, 5 5, 5 0)), ((5 0, 10 0, 10 5, 15 5, 15 -5, 5 -5, 5 0)))',
+          'MULTIPOLYGON (((0 10, 10 10, 10 5, 5 5, 5 0, 0 0, 0 10)), ((5 0, 10 0, 10 5, 15 5, 15 -5, 5 -5, 5 0)))'
+        ), $writer->write($gi)); // GemoetryCollection changed twice between 3.9 and 3.11
     }
 
     public function testGeometry_boundary()
