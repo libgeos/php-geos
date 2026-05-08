@@ -1358,7 +1358,7 @@ class GeometryTest extends GEOSTest
             $this->assertFalse( $g->isClosed() );
             $this->assertTrue(FALSE);
         } catch (Exception $e) {
-            $this->assertContains('LineString', $e->getMessage());
+            $this->assertContains('IllegalArgument', $e->getMessage());
         }
 
         $g = $reader->read('LINESTRING(0 0, 10 0, 5 5, 5 -5)');
@@ -1511,7 +1511,7 @@ class GeometryTest extends GEOSTest
             $g->numPoints();
             $this->assertTrue( FALSE );
         } catch (Exception $e) {
-            $this->assertContains( 'LineString', $e->getMessage() );
+            $this->assertContains( 'IllegalArgument', $e->getMessage() );
         }
 
     }
@@ -1737,7 +1737,7 @@ class GeometryTest extends GEOSTest
             $g->pointN(0);
             $this->assertTrue( FALSE );
         } catch (Exception $e) {
-            $this->assertContains( 'LineString', $e->getMessage() );
+            $this->assertContains( 'IllegalArgument', $e->getMessage() );
         }
 
     }
@@ -1773,7 +1773,7 @@ class GeometryTest extends GEOSTest
             $g->pointN(0);
             $this->assertTrue( FALSE );
         } catch (Exception $e) {
-            $this->assertContains( 'LineString', $e->getMessage() );
+            $this->assertContains( 'IllegalArgument', $e->getMessage() );
         }
 
     }
