@@ -257,3 +257,25 @@ RUN cd geos-${GEOSVERSION} && \
     cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/geos-${GEOSVERSION} \
     && make install
 RUN cd .. && rm -rf geos-${GEOSVERSION}*
+
+# Debian GNU/Linux 13 (trixie) ships PHP-8.4.16
+ARG PHPVERSION=8.4.16
+RUN curl -sLo php-${PHPVERSION}.tar.bz2 \
+    http://www.php.net/distributions/php-${PHPVERSION}.tar.bz2
+RUN tar xjf php-${PHPVERSION}.tar.bz2
+RUN cd php-${PHPVERSION} && \
+    ./configure --prefix=/opt/php-${PHPVERSION} \
+      --enable-debug \
+      --disable-all \
+      --disable-cgi \
+      --disable-dom \
+      --disable-libxml \
+      --disable-simplexml \
+      --disable-xml \
+      --disable-xmlreader \
+      --disable-xmlwriter \
+      --without-pear && \
+    make install
+RUN cd .. && rm -rf php-${PHPVERSION}*
+RUN rm /opt/php-${PHPVERSION}/bin/phpdbg
+RUN strip /opt/php-${PHPVERSION}/bin/php
