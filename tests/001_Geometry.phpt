@@ -527,7 +527,11 @@ class GeometryTest extends GEOSTest
         $g = $reader->read('LINESTRING(0 0, 10 0)');
         $g2 = $reader->read('LINESTRING(5 -10, 5 10)');
         $gi = $g->symDifference($g2);
-        $this->assertEquals(GEOS_VERSION == 3.9 ? 'MULTILINESTRING ((0 0, 5 0), (5 -10, 5 0), (5 0, 5 10), (5 0, 10 0))' : 'MULTILINESTRING ((0 0, 5 0), (5 0, 10 0), (5 -10, 5 0), (5 0, 5 10))', $writer->write($gi));
+        $this->assertEqualsAny(array(
+          'MULTILINESTRING ((0 0, 5 0), (5 0, 10 0), (5 -10, 5 0), (5 0, 5 10))',
+          'MULTILINESTRING ((0 0, 5 0), (5 -10, 5 0), (5 0, 5 10), (5 0, 10 0))',
+          'MULTILINESTRING ((5 0, 10 0), (5 0, 5 10), (5 -10, 5 0), (0 0, 5 0))'
+        ), $writer->write($gi->normalize()));
         $g2 = $reader->read('LINESTRING(5 0, 20 0)');
         $gi = $g->symDifference($g2);
         $this->assertEquals('MULTILINESTRING ((0 0, 5 0), (10 0, 20 0))', $writer->write($gi));
