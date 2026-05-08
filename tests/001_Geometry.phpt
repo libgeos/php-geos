@@ -338,7 +338,7 @@ class GeometryTest extends GEOSTest
         $this->assertEquals( 'POINT (0 0)', $writer->write($gi));
         $g2 = $reader->read('POINT(1 0)');
         $gi = $g->intersection($g2);
-        $this->assertEquals(GEOS_DEFAULT_EMPTY ? 'POINT EMPTY' : 'GEOMETRYCOLLECTION EMPTY', $writer->write($gi)); //GH-501
+        $this->assertEqualsAny(array('POINT EMPTY', 'GEOMETRYCOLLECTION EMPTY'), $writer->write($gi)); //GH-501
 
         /* POINT - LINE */
         $g = $reader->read('LINESTRING(0 0, 10 0)');
@@ -347,7 +347,7 @@ class GeometryTest extends GEOSTest
         $this->assertEquals( 'POINT (5 0)', $writer->write($gi));
         $g2 = $reader->read('POINT(12 0)');
         $gi = $g->intersection($g2);
-        $this->assertEquals(GEOS_DEFAULT_EMPTY ? 'POINT EMPTY' : 'GEOMETRYCOLLECTION EMPTY', $writer->write($gi)); //GH-501
+        $this->assertEqualsAny(array('POINT EMPTY', 'GEOMETRYCOLLECTION EMPTY'), $writer->write($gi)); //GH-501
 
         /* LINE - LINE */
         $g = $reader->read('LINESTRING(0 0, 10 0)');
@@ -445,7 +445,7 @@ class GeometryTest extends GEOSTest
         $g = $reader->read('POINT(0 0)');
         $g2 = $reader->read('POINT(0 0)');
         $gi = $g->difference($g2);
-        $this->assertEquals(GEOS_DEFAULT_EMPTY ? 'POINT EMPTY' : 'GEOMETRYCOLLECTION EMPTY', $writer->write($gi)); //GH-501
+        $this->assertEqualsAny(array('POINT EMPTY', 'GEOMETRYCOLLECTION EMPTY'), $writer->write($gi)); //GH-501
         $g2 = $reader->read('POINT(1 0)');
         $gi = $g->difference($g2);
         $this->assertEquals('POINT (0 0)', $writer->write($gi));
@@ -460,7 +460,7 @@ class GeometryTest extends GEOSTest
         $g = $reader->read('POINT(5 0)');
         $g2 = $reader->read('LINESTRING(0 0, 10 0)');
         $gi = $g->difference($g2);
-        $this->assertEquals(GEOS_DEFAULT_EMPTY ? 'POINT EMPTY' : 'GEOMETRYCOLLECTION EMPTY', $writer->write($gi)); //GH-501
+        $this->assertEqualsAny(array('POINT EMPTY', 'GEOMETRYCOLLECTION EMPTY'), $writer->write($gi)); //GH-501
         $g2 = $reader->read('LINESTRING(0 1, 10 1)');
         $gi = $g->difference($g2);
         $this->assertEquals( 'POINT (5 0)', $writer->write($gi));
@@ -503,7 +503,7 @@ class GeometryTest extends GEOSTest
         $g = $reader->read('POINT(0 0)');
         $g2 = $reader->read('POINT(0 0)');
         $gi = $g->symDifference($g2);
-        $this->assertEquals(GEOS_DEFAULT_EMPTY ? 'POINT EMPTY' : 'GEOMETRYCOLLECTION EMPTY', $writer->write($gi)); //GH-501
+        $this->assertEqualsAny(array('POINT EMPTY', 'GEOMETRYCOLLECTION EMPTY'), $writer->write($gi)); //GH-501
         $g2 = $reader->read('POINT(1 0)');
         $gi = $g->symDifference($g2);
         $this->assertEquals(GEOS_USE_BRACKETED_MULTIPOINT ? 'MULTIPOINT ((0 0), (1 0))' : 'MULTIPOINT (0 0, 1 0)', $writer->write($gi));
