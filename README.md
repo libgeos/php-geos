@@ -15,14 +15,14 @@ The bindings are linked to the C-API, for betters stability.
 You need:
 
   - PHP development files
-    ( often found in packages named something like 'php5-dev' )
+    ( often found in packages named something like 'php-dev' )
 
   - GEOS development files
     ( often found in packages named something like 'libgeos-dev' )
 
 ## Procedure
 
-    git clone https://git.osgeo.org/gitea/geos/php-geos.git
+    git clone https://gitea.osgeo.org/geos/php-geos.git
     cd php-geos
     ./autogen.sh
     ./configure
