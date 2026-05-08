@@ -1486,7 +1486,7 @@ class GeometryTest extends GEOSTest
             $g->numInteriorRings();
             $this->assertTrue( FALSE );
         } catch (Exception $e) {
-            $this->assertContains( 'Polygon', $e->getMessage() );
+            $this->assertContains( 'is not a', $e->getMessage() );
         }
 
     }
@@ -1580,7 +1580,7 @@ class GeometryTest extends GEOSTest
             $g->interiorRingN(0);
             $this->assertTrue( FALSE );
         } catch (Exception $e) {
-            $this->assertContains( 'Polygon', $e->getMessage() );
+            $this->assertContains( 'is not a', $e->getMessage() );
         }
 
     }
@@ -1606,7 +1606,7 @@ class GeometryTest extends GEOSTest
             $g->exteriorRing(0);
             $this->assertTrue( FALSE );
         } catch (Exception $e) {
-            $this->assertContains( 'Polygon', $e->getMessage() );
+            $this->assertContains( 'Invalid', $e->getMessage() );
         }
 
     }
