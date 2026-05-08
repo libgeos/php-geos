@@ -86,7 +86,7 @@ class GEOSTest
     public function assertContains($expected, $actual)
     {
         if (strpos($actual, $expected) === false) {
-            throw new Exception("Expected '{$expected}' to contain '{$actual}'.");
+            throw new Exception("Expected '{$actual}' to contain '{$expected}'.");
         }
     }
 
