@@ -101,7 +101,7 @@ class GeometryTest extends GEOSTest
             $prj = $g->interpolate(0);
             $this->assertTrue(FALSE); # this is just to fail if we get here
         } catch (Exception $e) {
-            $this->assertContains('LineString', $e->getMessage());
+            $this->assertContains('IllegalArgument', $e->getMessage());
         }
 
         $g = $reader->read('LINESTRING(0 0, 10 0)');
