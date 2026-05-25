@@ -140,7 +140,10 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_Geometry_equals          arginfo_geom
 
-#define arginfo_Geometry_equalsExact     arginfo_geom
+ZEND_BEGIN_ARG_INFO_EX(arginfo_Geometry_equalsExact, 0, 0, 1)
+    ZEND_ARG_INFO(0, geom)
+    ZEND_ARG_INFO(0, tolerance)
+ZEND_END_ARG_INFO()
 
 #define arginfo_Geometry_isEmpty         arginfo_void
 

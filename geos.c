@@ -67,8 +67,6 @@ PHP_FUNCTION(GEOSRelateMatch);
 # define GEOS_PHP_RETURN_STRINGL(x,s) { RETVAL_STRINGL((x),(s)); efree((x)); return; }
 # define GEOS_PHP_ADD_ASSOC_ARRAY(a,k,v) { add_assoc_string((a), (k), (v)); efree((v)); }
 # define GEOS_PHP_ADD_ASSOC_ZVAL(a,k,v) { add_assoc_zval((a), (k), (v)); efree((v)); }
-# define GEOS_PHP_HASH_GET_CUR_KEY(s,k,i) zend_hash_get_current_key((s), (k), (i))
-# define GEOS_PHP_HASH_GET_CUR_DATA(h,d) ( d = zend_hash_get_current_data((h)) )
 # define GEOS_PHP_ZVAL zval *
 #else /* PHP_VERSION_ID < 70000 */
 # define GEOS_PHP_DTOR_OBJECT void
@@ -76,11 +74,9 @@ PHP_FUNCTION(GEOSRelateMatch);
 # define GEOS_PHP_RETURN_STRINGL(x,s) RETURN_STRINGL((x),(s),0)
 # define GEOS_PHP_ADD_ASSOC_ARRAY(a,k,v) add_assoc_string((a), (k), (v), 0)
 # define GEOS_PHP_ADD_ASSOC_ZVAL(a,k,v) add_assoc_zval((a), (k), (v))
-# define GEOS_PHP_HASH_GET_CUR_KEY(s,k,i) zend_hash_get_current_key((s), (k), (i), 0)
 # define zend_string char
 # define zend_long long
 # define ZSTR_VAL(x) (x)
-# define GEOS_PHP_HASH_GET_CUR_DATA(h,d) zend_hash_get_current_data((h),(void**)&(d))
 # define GEOS_PHP_ZVAL zval **
 #endif
 
@@ -892,42 +888,38 @@ PHP_METHOD(Geometry, buffer)
     if ( style_val )
     {
         style = HASH_OF(style_val);
-        while(GEOS_PHP_HASH_GET_CUR_KEY(style, &key, &index)
-              == HASH_KEY_IS_STRING)
+
+        ZEND_HASH_FOREACH_STR_KEY_VAL(style, key, data)
         {
+            if ( key == NULL ) continue;
+
             if(!strcmp(ZSTR_VAL(key), "quad_segs"))
             {
-                GEOS_PHP_HASH_GET_CUR_DATA(style, data);
                 quadSegs = getZvalAsLong(data);
                 GEOSBufferParams_setQuadrantSegments_r(GEOS_G(handle), params, quadSegs);
             }
             else if(!strcmp(ZSTR_VAL(key), "endcap"))
             {
-                GEOS_PHP_HASH_GET_CUR_DATA(style, data);
                 endCapStyle = getZvalAsLong(data);
                 GEOSBufferParams_setEndCapStyle_r(GEOS_G(handle), params, endCapStyle);
             }
             else if(!strcmp(ZSTR_VAL(key), "join"))
             {
-                GEOS_PHP_HASH_GET_CUR_DATA(style, data);
                 joinStyle = getZvalAsLong(data);
                 GEOSBufferParams_setJoinStyle_r(GEOS_G(handle), params, joinStyle);
             }
             else if(!strcmp(ZSTR_VAL(key), "mitre_limit"))
             {
-                GEOS_PHP_HASH_GET_CUR_DATA(style, data);
                 mitreLimit = getZvalAsDouble(data);
                 GEOSBufferParams_setMitreLimit_r(GEOS_G(handle), params, mitreLimit);
             }
             else if(!strcmp(ZSTR_VAL(key), "single_sided"))
             {
-                GEOS_PHP_HASH_GET_CUR_DATA(style, data);
                 singleSided = getZvalAsLong(data);
                 GEOSBufferParams_setSingleSided_r(GEOS_G(handle), params, singleSided);
             }
 
-            zend_hash_move_forward(style);
-        }
+        } ZEND_HASH_FOREACH_END();
     }
 
     ret = GEOSBufferWithParams_r(GEOS_G(handle), this, params, dist);
@@ -983,27 +975,24 @@ PHP_METHOD(Geometry, offsetCurve)
     if ( style_val )
     {
         style = HASH_OF(style_val);
-        while(GEOS_PHP_HASH_GET_CUR_KEY(style, &key, &index)
-              == HASH_KEY_IS_STRING)
+        ZEND_HASH_FOREACH_STR_KEY_VAL(style, key, data)
         {
+            if ( key == NULL ) continue;
+
             if(!strcmp(ZSTR_VAL(key), "quad_segs"))
             {
-                GEOS_PHP_HASH_GET_CUR_DATA(style, data);
                 quadSegs = getZvalAsLong(data);
             }
             else if(!strcmp(ZSTR_VAL(key), "join"))
             {
-                GEOS_PHP_HASH_GET_CUR_DATA(style, data);
                 joinStyle = getZvalAsLong(data);
             }
             else if(!strcmp(ZSTR_VAL(key), "mitre_limit"))
             {
-                GEOS_PHP_HASH_GET_CUR_DATA(style, data);
                 mitreLimit = getZvalAsDouble(data);
             }
 
-            zend_hash_move_forward(style);
-        }
+        } ZEND_HASH_FOREACH_END();
     }
 
     ret = GEOSOffsetCurve_r(GEOS_G(handle), this, dist, quadSegs, joinStyle, mitreLimit);

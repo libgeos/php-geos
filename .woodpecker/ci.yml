@@ -5,11 +5,11 @@ when:
 
 matrix:
   PHP_BIN:
-    - /opt/php-5.4.9/bin/
-    - /opt/php-5.5.38/bin/
-    - /opt/php-5.6.28/bin/
     - /opt/php-7.0.13/bin/
     - /opt/php-7.1.0/bin/
+    - /opt/php-7.4.30/bin/
+    - /opt/php-8.1.10/bin/
+    - /opt/php-8.4.16/bin/
   GEOS_BIN:
     - /opt/geos-3.4.3/bin/
     - /opt/geos-3.5.2/bin/
@@ -32,12 +32,7 @@ steps:
       - export LD_LIBRARY_PATH=${GEOS_BIN}/../lib:$${LD_LIBRARY_PATH}
       - echo $${LD_LIBRARY_PATH}
       - export PATH=${PHP_BIN}:${GEOS_BIN}:$${PATH}
-      - echo $${PATH}
-      - php --version
-      #  Always use newest phpize or we'll be hit by
-      #  false negatives on make check, see
-      #  https://git.osgeo.org/gogs/geos/php-geos/issues/16
-      - /opt/php-7.1.0/bin/phpize
+      - phpize
       - ./configure
       - make
       - make check
