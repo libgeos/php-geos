@@ -54,7 +54,6 @@ PHP_FUNCTION(GEOSSharedPaths);
 PHP_FUNCTION(GEOSRelateMatch);
 #endif
 
-#define GEOS_PHP_DTOR_OBJECT zend_object
 #define zend_object_value zend_object *
 #define zend_uint size_t
 #define MAKE_STD_ZVAL(x) x = emalloc(sizeof(zval))
@@ -62,7 +61,6 @@ PHP_FUNCTION(GEOSRelateMatch);
 #define GEOS_PHP_RETURN_STRINGL(x,s) { RETVAL_STRINGL((x),(s)); efree((x)); return; }
 #define GEOS_PHP_ADD_ASSOC_ARRAY(a,k,v) { add_assoc_string((a), (k), (v)); efree((v)); }
 #define GEOS_PHP_ADD_ASSOC_ZVAL(a,k,v) { add_assoc_zval((a), (k), (v)); efree((v)); }
-#define GEOS_PHP_ZVAL zval *
 
 
 static zend_function_entry geos_functions[] = {
@@ -176,7 +174,7 @@ getRelay(zval* val, zend_class_entry* ce) {
     return proxy->relay;
 }
 
-static long getZvalAsLong(GEOS_PHP_ZVAL val)
+static long getZvalAsLong(zval * val)
 {
     long ret;
     zval tmp;
@@ -189,7 +187,7 @@ static long getZvalAsLong(GEOS_PHP_ZVAL val)
     return ret;
 }
 
-static long getZvalAsDouble(GEOS_PHP_ZVAL val)
+static long getZvalAsDouble(zval * val)
 {
     double ret;
     zval tmp;
@@ -204,7 +202,7 @@ static long getZvalAsDouble(GEOS_PHP_ZVAL val)
 
 static zend_object_value
 Gen_create_obj (zend_class_entry *type,
-    void (*dtor)(GEOS_PHP_DTOR_OBJECT *object TSRMLS_DC),
+    void (*dtor)(zend_object *object TSRMLS_DC),
     zend_object_handlers* handlers)
 {
     TSRMLS_FETCH();
@@ -586,7 +584,7 @@ Geometry_serialize(zval *object, unsigned char **buffer, zend_uint *buf_len,
 }
 
 static int
-Geometry_deserialize(GEOS_PHP_ZVAL object, zend_class_entry *ce, const unsigned char *buf,
+Geometry_deserialize(zval * object, zend_class_entry *ce, const unsigned char *buf,
         zend_uint buf_len, zend_unserialize_data *data TSRMLS_DC)
 {
     GEOSWKBReader* deserializer;
@@ -640,7 +638,7 @@ dumpGeometry(GEOSGeometry* g, zval* array)
 
 
 static void
-Geometry_dtor (GEOS_PHP_DTOR_OBJECT *object TSRMLS_DC)
+Geometry_dtor (zend_object *object TSRMLS_DC)
 {
     Proxy *obj = php_geos_fetch_object(object);
 
@@ -786,7 +784,7 @@ PHP_METHOD(Geometry, buffer)
     double mitreLimit = default_mitreLimit;
     long singleSided = 0;
     zval *style_val = NULL;
-    GEOS_PHP_ZVAL data;
+    zval * data;
     HashTable *style;
     zend_string *key;
     zend_ulong index;
@@ -875,7 +873,7 @@ PHP_METHOD(Geometry, offsetCurve)
     long int joinStyle = default_joinStyle;
     double mitreLimit = default_mitreLimit;
     zval *style_val = NULL;
-    GEOS_PHP_ZVAL data;
+    zval * data;
     HashTable *style;
     zend_string *key;
     zend_ulong index;
@@ -2264,7 +2262,7 @@ static zend_class_entry *WKTReader_ce_ptr;
 static zend_object_handlers WKTReader_object_handlers;
 
 static void
-WKTReader_dtor (GEOS_PHP_DTOR_OBJECT *object TSRMLS_DC)
+WKTReader_dtor (zend_object *object TSRMLS_DC)
 {
     Proxy *obj = php_geos_fetch_object(object);
 
@@ -2377,7 +2375,7 @@ static zend_class_entry *WKTWriter_ce_ptr;
 static zend_object_handlers WKTWriter_object_handlers;
 
 static void
-WKTWriter_dtor (GEOS_PHP_DTOR_OBJECT *object TSRMLS_DC)
+WKTWriter_dtor (zend_object *object TSRMLS_DC)
 {
     Proxy *obj = php_geos_fetch_object(object);
 
@@ -2560,7 +2558,7 @@ static zend_class_entry *WKBWriter_ce_ptr;
 static zend_object_handlers WKBWriter_object_handlers;
 
 static void
-WKBWriter_dtor (GEOS_PHP_DTOR_OBJECT *object TSRMLS_DC)
+WKBWriter_dtor (zend_object *object TSRMLS_DC)
 {
     Proxy *obj = php_geos_fetch_object(object);
 
@@ -2782,7 +2780,7 @@ static zend_class_entry *WKBReader_ce_ptr;
 static zend_object_handlers WKBReader_object_handlers;
 
 static void
-WKBReader_dtor (GEOS_PHP_DTOR_OBJECT *object TSRMLS_DC)
+WKBReader_dtor (zend_object *object TSRMLS_DC)
 {
     Proxy *obj = php_geos_fetch_object(object);
 
