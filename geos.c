@@ -787,7 +787,6 @@ PHP_METHOD(Geometry, buffer)
     zval * data;
     HashTable *style;
     zend_string *key;
-    zend_ulong index;
 
     this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
@@ -876,7 +875,6 @@ PHP_METHOD(Geometry, offsetCurve)
     zval * data;
     HashTable *style;
     zend_string *key;
-    zend_ulong index;
 
     this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
 
