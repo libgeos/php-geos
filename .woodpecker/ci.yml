@@ -10,6 +10,7 @@ matrix:
     - /opt/php-7.4.30/bin/
     - /opt/php-8.1.10/bin/
     - /opt/php-8.4.16/bin/
+    - /opt/php-8.5.6/bin/
   GEOS_BIN:
     - /opt/geos-3.4.3/bin/
     - /opt/geos-3.5.2/bin/
