@@ -1847,6 +1847,25 @@ class GeometryTest extends GEOSTest
 
     }
 
+    public function testGeometry_minimumRotatedRectangle()
+    {
+        $reader = new GEOSWKTReader();
+        $writer = new GEOSWKTWriter();
+        $writer->setRoundingPrecision(0);
+
+        $g = $reader->read('POLYGON ((0 0 , 10 10 , 5 20, 0 0))');
+        $r = $g->minimumRotatedRectangle();
+        $this->assertEquals('POLYGON ((0 0, 5 20, 12 18, 7 -2, 0 0))', $writer->write($r));
+
+        $g = $reader->read('LINESTRING (0 0 , 10 10)');
+        $r = $g->minimumRotatedRectangle();
+        $this->assertEquals('LINESTRING (0 0, 10 10)', $writer->write($r));
+
+        $g = $reader->read('POINT (0 10)');
+        $r = $g->minimumRotatedRectangle();
+        $this->assertEquals('POINT (0 10)', $writer->write($r));
+    }
+
     public function testGeometry_delaunayTriangulation()
     {
         if (!method_exists("GEOSGeometry", 'delaunayTriangulation')) {
@@ -1981,6 +2000,7 @@ GeometryTest->testGeometry_area	OK
 GeometryTest->testGeometry_length	OK
 GeometryTest->testGeometry_distance	OK
 GeometryTest->testGeometry_hausdorffDistance	OK
+GeometryTest->testGeometry_minimumRotatedRectangle	OK
 GeometryTest->testGeometry_delaunayTriangulation	OK
 GeometryTest->testGeometry_voronoiDiagram	OK
 GeometryTest->testGeometry_snapTo	OK

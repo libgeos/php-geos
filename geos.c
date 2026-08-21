@@ -340,6 +340,7 @@ PHP_METHOD(Geometry, area);
 PHP_METHOD(Geometry, length);
 PHP_METHOD(Geometry, distance);
 PHP_METHOD(Geometry, hausdorffDistance);
+PHP_METHOD(Geometry, minimumRotatedRectangle);
 
 #ifdef HAVE_GEOS_SNAP
 PHP_METHOD(Geometry, snapTo);
@@ -479,6 +480,7 @@ static zend_function_entry Geometry_methods[] = {
     PHP_ME(Geometry, length, arginfo_Geometry_length, 0)
     PHP_ME(Geometry, distance, arginfo_Geometry_distance, 0)
     PHP_ME(Geometry, hausdorffDistance, arginfo_Geometry_hausdorffDistance, 0)
+    PHP_ME(Geometry, minimumRotatedRectangle, arginfo_Geometry_minimumRotatedRectangle, 0)
 
 #   if HAVE_GEOS_SNAP
     PHP_ME(Geometry, snapTo, arginfo_Geometry_snapTo, 0)
@@ -2197,6 +2199,24 @@ PHP_METHOD(Geometry, hausdorffDistance)
     if ( ! ret ) RETURN_NULL(); /* should get an exception first */
 
     RETURN_DOUBLE(dist);
+}
+
+/**
+ * GEOSGeometry GEOSGeometry::minimumRotatedRectangle()
+ */
+PHP_METHOD(Geometry, minimumRotatedRectangle)
+{
+    GEOSGeometry *this;
+    GEOSGeometry *ret;
+
+    this = (GEOSGeometry*)getRelay(getThis(), Geometry_ce_ptr);
+
+    ret = GEOSMinimumRotatedRectangle_r(GEOS_G(handle), this);
+    if ( ! ret ) RETURN_NULL(); /* should get an exception first */
+
+    /* return_value is a zval */
+    object_init_ex(return_value, Geometry_ce_ptr);
+    setRelay(return_value, ret);
 }
 
 #ifdef HAVE_GEOS_SNAP

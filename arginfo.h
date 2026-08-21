@@ -224,6 +224,8 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_Geometry_hausdorffDistance arginfo_geom
 
+#define arginfo_Geometry_minimumRotatedRectangle arginfo_void
+
 #ifdef HAVE_GEOS_SNAP
 ZEND_BEGIN_ARG_INFO_EX(arginfo_Geometry_snapTo, 0, 0, 2)
     ZEND_ARG_INFO(0, geom)
