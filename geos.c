@@ -144,9 +144,9 @@ typedef struct Proxy_t {
 } Proxy;
 
 static inline Proxy *php_geos_fetch_object(zend_object *obj) {
-  return (Proxy *)((char *) obj - XtOffsetOf(Proxy, std));
+  return (Proxy *)((char *) obj - offsetof(Proxy, std));
 }
-#define Z_GEOS_OBJ_P(zv) (Proxy *)((char *) (Z_OBJ_P(zv)) - XtOffsetOf(Proxy, std))
+#define Z_GEOS_OBJ_P(zv) (Proxy *)((char *) (Z_OBJ_P(zv)) - offsetof(Proxy, std))
 
 static void
 setRelay(zval* val, void* obj) {
@@ -183,7 +183,7 @@ static long getZvalAsLong(zval * val)
     zval_copy_ctor(&tmp);
     convert_to_long(&tmp);
     ret = Z_LVAL(tmp);
-    zval_dtor(&tmp);
+    zval_ptr_dtor_nogc(&tmp);
     return ret;
 }
 
@@ -196,7 +196,7 @@ static long getZvalAsDouble(zval * val)
     zval_copy_ctor(&tmp);
     convert_to_double(&tmp);
     ret = Z_DVAL(tmp);
-    zval_dtor(&tmp);
+    zval_ptr_dtor_nogc(&tmp);
     return ret;
 }
 
@@ -3118,7 +3118,7 @@ PHP_MINIT_FUNCTION(geos)
     memcpy(&WKTReader_object_handlers,
         zend_get_std_object_handlers(), sizeof(zend_object_handlers));
     WKTReader_object_handlers.clone_obj = NULL;
-    WKTReader_object_handlers.offset = XtOffsetOf(Proxy, std);
+    WKTReader_object_handlers.offset = offsetof(Proxy, std);
     WKTReader_object_handlers.free_obj = WKTReader_dtor;
 
     /* WKTWriter */
@@ -3128,7 +3128,7 @@ PHP_MINIT_FUNCTION(geos)
     memcpy(&WKTWriter_object_handlers,
         zend_get_std_object_handlers(), sizeof(zend_object_handlers));
     WKTWriter_object_handlers.clone_obj = NULL;
-    WKTWriter_object_handlers.offset = XtOffsetOf(Proxy, std);
+    WKTWriter_object_handlers.offset = offsetof(Proxy, std);
     WKTWriter_object_handlers.free_obj = WKTWriter_dtor;
 
     /* Geometry */
@@ -3141,7 +3141,7 @@ PHP_MINIT_FUNCTION(geos)
     /* Geometry serialization */
     Geometry_ce_ptr->serialize = Geometry_serialize;
     Geometry_ce_ptr->unserialize = Geometry_deserialize;
-    Geometry_object_handlers.offset = XtOffsetOf(Proxy, std);
+    Geometry_object_handlers.offset = offsetof(Proxy, std);
     Geometry_object_handlers.free_obj = Geometry_dtor;
 
     /* WKBWriter */
@@ -3151,7 +3151,7 @@ PHP_MINIT_FUNCTION(geos)
     memcpy(&WKBWriter_object_handlers,
         zend_get_std_object_handlers(), sizeof(zend_object_handlers));
     WKBWriter_object_handlers.clone_obj = NULL;
-    WKBWriter_object_handlers.offset = XtOffsetOf(Proxy, std);
+    WKBWriter_object_handlers.offset = offsetof(Proxy, std);
     WKBWriter_object_handlers.free_obj = WKBWriter_dtor;
 
     /* WKBReader */
@@ -3161,7 +3161,7 @@ PHP_MINIT_FUNCTION(geos)
     memcpy(&WKBReader_object_handlers,
         zend_get_std_object_handlers(), sizeof(zend_object_handlers));
     WKBReader_object_handlers.clone_obj = NULL;
-    WKBReader_object_handlers.offset = XtOffsetOf(Proxy, std);
+    WKBReader_object_handlers.offset = offsetof(Proxy, std);
     WKBReader_object_handlers.free_obj = WKBReader_dtor;
 
 
