@@ -1855,7 +1855,7 @@ class GeometryTest extends GEOSTest
 
         $g = $reader->read('POLYGON ((0 0 , 10 10 , 5 20, 0 0))');
         $r = $g->minimumRotatedRectangle();
-        $this->assertEquals('POLYGON ((0 0, 5 20, 12 18, 7 -2, 0 0))', $writer->write($r));
+        $this->assertEquals('POLYGON ((0 0, 5 20, 12 18, 7 -2, 0 0))', $writer->write($r->normalize()));
 
         $g = $reader->read('LINESTRING (0 0 , 10 10)');
         $r = $g->minimumRotatedRectangle();
