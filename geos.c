@@ -187,7 +187,7 @@ static long getZvalAsLong(zval * val)
     return ret;
 }
 
-static long getZvalAsDouble(zval * val)
+static double getZvalAsDouble(zval * val)
 {
     double ret;
     zval tmp;
